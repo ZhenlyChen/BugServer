@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/kataras/iris"
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
+	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
 )
@@ -22,13 +22,13 @@ type UsersController struct {
 }
 
 func (c *UsersController) BeforeActivation(b mvc.BeforeActivation) {
-	b.Handle("GET", "/login", "Login")
+	// b.Handle("GET", "/login", "Login")
 }
 
 func (c *UsersController) AfterActivation(a mvc.AfterActivation) {
 	// fmt.Println(c.Session.Get("abc"))
 }
 
-func (c *UsersController) Login() (results string) {
-	return "Login"
+func (c *UsersController) GetLoginBy(name string) (results string) {
+	return s
 }
