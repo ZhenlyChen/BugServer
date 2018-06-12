@@ -12,7 +12,7 @@ func NewService(m *models.Model) *Service {
 	return service
 }
 
-func (s *Service) GetUserService() UserService {
+func (s *Service) NewUserService() UserService {
 	return &userService{
 		Model: s.Model.User,
 	}

@@ -10,3 +10,8 @@ Mongo:
   User: user
   Password: password
   Name: bug
+Violet:
+  ClientID: 1234567890
+  ClientKey: 12345567890
+  ServerHost: https://oauth.xmatrix.studio/api/v2
+  LoginURL: https://oauth.xmatrix.studio/api/v2

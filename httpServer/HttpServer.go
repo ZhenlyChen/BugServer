@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
+	"github.com/XMatrixStudio/Violet.SDK.Go"
 )
 
 type HttpConfig struct {
@@ -23,6 +24,7 @@ type HttpConfig struct {
 type Config struct {
 	Mongo      models.Mongo `yaml:"Mongo"`  // mongoDB配置
 	HttpServer HttpConfig   `yaml:"Server"` // iris配置
+	Violet 	  	violetSdk.Config `yaml:"Violet"` // Violet配置
 }
 
 func RunServer(c Config) {
@@ -33,6 +35,8 @@ func RunServer(c Config) {
 	}
 	// 初始化服务
 	Service := services.NewService(Model)
+	userService := Service.NewUserService()
+	userService.InitViolet(c.Violet)
 
 	// 启动服务器
 	app := iris.New()
@@ -47,7 +51,7 @@ func RunServer(c Config) {
 	// "/users" based mvc application.
 	users := mvc.New(app.Party("/users"))
 	// Bind the "userService" to the UserController's Service (interface) field.
-	users.Register(Service.GetUserService(), sessManager.Start)
+	users.Register(userService, sessManager.Start)
 	users.Handle(new(controllers.UsersController))
 
 	app.Run(

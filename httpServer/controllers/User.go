@@ -34,10 +34,34 @@ type LoginReq struct {
 	Password string
 }
 
-func (c *UsersController) PostLogin() (results string) {
+type LoginRes struct {
+	State string
+	Data string
+}
+
+func (c *UsersController) PostLogin() (result LoginRes) {
 	req := LoginReq{}
 	c.Ctx.ReadForm(&req)
-	c.Service.Login(req.Name, req.Password)
-	results = "OK"
+	valid, data, err := c.Service.Login(req.Name, req.Password)
+	if err != nil {
+		result.State = "error"
+		result.Data =  err.Error()
+		return
+	}
+	if !valid {
+		result.State = "not_valid"
+		result.Data = data
+		return
+	}
+
+	userID, tErr := c.Service.GetUser(data)
+	if tErr != nil {
+		result.State = "error"
+		result.Data = tErr.Error()
+		return
+	}
+	c.Session.Set("id", userID)
+
+	result.State = "success"
 	return
 }
