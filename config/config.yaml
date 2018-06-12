@@ -1,0 +1,12 @@
+Server:
+  Host: 127.0.0.1
+  Port: 30080
+  Dev: true
+  PortPoolBegin: 30081
+  PortPoolSize: 10
+Mongo:
+  Host: 111.230.240.70
+  Port: 23333
+  User: bug
+  Password: 0cbHZE9d7Fgmo5zJglm1
+  Name: bug
