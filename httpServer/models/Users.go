@@ -60,31 +60,19 @@ func (m *UserModel) SetUserName(id, name string) (err error) {
 }
 
 // GetUserByID 根据ID查询用户
-func (m *UserModel) GetUserByID(id string) (*Users, error) {
-	user := new(Users)
-	err := m.DB.FindId(id).One(&user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+func (m *UserModel) GetUserByID(id string) (user Users, err error) {
+	err = m.DB.FindId(id).One(&user)
+	return
 }
 
-// GetUserByName
-func (m *UserModel) GetUserByName(name string) (*Users, error) {
-	user := new(Users)
-	err := m.DB.Find(bson.M{}) (id).One(&user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+// GetUserByName 根据名字获取用户
+func (m *UserModel) GetUserByName(name string) (user Users, err error) {
+	err = m.DB.Find(bson.M{"name": name}).One(&user)
+	return
 }
 
-// GetUserByEmail
-func (m *UserModel) GetUserByEmail(email string) (*Users, error) {
-	user := new(Users)
-	err := m.DB.FindId(id).One(&user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+// GetUserByEmail 根据邮箱获取用户
+func (m *UserModel) GetUserByEmail(email string) (user Users, err error) {
+	err = m.DB.Find(bson.M{"email": email}).One(&user)
+	return
 }

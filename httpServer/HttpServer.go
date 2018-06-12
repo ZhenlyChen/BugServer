@@ -1,27 +1,28 @@
 package httpServer
 
 import (
+	"time"
+
+	"github.com/ZhenlyChen/BugServer/httpServer/controllers"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
-	"github.com/kataras/iris"
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
+	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
-	"time"
-	"github.com/ZhenlyChen/BugServer/httpServer/controllers"
 )
 
 type HttpConfig struct {
-	Host string `yaml:"Host"` // 服务器监听地址
-	Port string `yaml:"Port"` // 服务器监听端口
-	Dev  bool   `yaml:"Dev"`  // 是否开发环境
-	PortPoolBegin int64 `yaml:"PortPoolBegin"` // 游戏服务器地址池开始
-	PortPoolSize int64 `yaml:"PortPoolSize"` // 最大负载
+	Host          string `yaml:"Host"`          // 服务器监听地址
+	Port          string `yaml:"Port"`          // 服务器监听端口
+	Dev           bool   `yaml:"Dev"`           // 是否开发环境
+	PortPoolBegin int64  `yaml:"PortPoolBegin"` // 游戏服务器地址池开始
+	PortPoolSize  int64  `yaml:"PortPoolSize"`  // 最大负载
 }
 
 // Config 配置文件
 type Config struct {
-	Mongo models.Mongo  `yaml:"Mongo"`  // mongoDB配置
-	HttpServer HttpConfig `yaml:"Server"` // iris配置
+	Mongo      models.Mongo `yaml:"Mongo"`  // mongoDB配置
+	HttpServer HttpConfig   `yaml:"Server"` // iris配置
 }
 
 func RunServer(c Config) {
@@ -31,8 +32,7 @@ func RunServer(c Config) {
 		panic(err)
 	}
 	// 初始化服务
-	Service := services.NewSerivce(Model)
-
+	Service := services.NewService(Model)
 
 	// 启动服务器
 	app := iris.New()
@@ -47,7 +47,7 @@ func RunServer(c Config) {
 	// "/users" based mvc application.
 	users := mvc.New(app.Party("/users"))
 	// Bind the "userService" to the UserController's Service (interface) field.
-	users.Register(Service.User, sessManager.Start)
+	users.Register(Service.GetUserService(), sessManager.Start)
 	users.Handle(new(controllers.UsersController))
 
 	app.Run(

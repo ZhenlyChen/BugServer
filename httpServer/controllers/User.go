@@ -29,6 +29,15 @@ func (c *UsersController) AfterActivation(a mvc.AfterActivation) {
 	// fmt.Println(c.Session.Get("abc"))
 }
 
-func (c *UsersController) GetLoginBy(name string) (results string) {
-	return s
+type LoginReq struct {
+	Name     string
+	Password string
+}
+
+func (c *UsersController) PostLogin() (results string) {
+	req := LoginReq{}
+	c.Ctx.ReadForm(&req)
+	c.Service.Login(req.Name, req.Password)
+	results = "OK"
+	return
 }
