@@ -1,0 +1,12 @@
+Server:
+  Host: 127.0.0.1
+  Port: 10240
+  Dev: true
+  PortPoolBegin: 10241
+  PortPoolSize: 10
+Mongo:
+  Host: 127.0.0.1
+  Port: 12345
+  User: user
+  Password: password
+  Name: bug
