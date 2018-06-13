@@ -4,8 +4,6 @@
     <list default="true" id="81594bc5-d135-4bb9-aaea-d01ef02a3a89" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/httpServer/controllers/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/controllers/User.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/httpServer/models/Users.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/models/Users.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/httpServer/services/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/services/User.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,7 +17,7 @@
       <file leaf-file-name="HttpServer.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/httpServer/HttpServer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="24">
+            <state relative-caret-position="624">
               <caret line="36" column="28" selection-start-line="36" selection-start-column="28" selection-end-line="36" selection-end-column="28" />
             </state>
           </provider>
@@ -28,8 +26,8 @@
       <file leaf-file-name="User.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/httpServer/controllers/User.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="677">
-              <caret line="135" column="21" lean-forward="true" selection-start-line="135" selection-start-column="21" selection-end-line="135" selection-end-column="21" />
+            <state relative-caret-position="1776">
+              <caret line="87" column="10" lean-forward="true" selection-start-line="87" selection-start-column="10" selection-end-line="87" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -46,7 +44,7 @@
       <file leaf-file-name="Users.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/httpServer/models/Users.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
+            <state relative-caret-position="1800">
               <caret line="78" column="54" selection-start-line="78" selection-start-column="54" selection-end-line="78" selection-end-column="54" />
               <folding>
                 <element signature="e#16#89#0" expanded="true" />
@@ -58,7 +56,7 @@
       <file leaf-file-name="session.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../globalsign/mgo/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
+            <state relative-caret-position="59520">
               <caret line="2499" column="21" selection-start-line="2499" selection-start-column="21" selection-end-line="2499" selection-end-column="21" />
             </state>
           </provider>
@@ -67,8 +65,8 @@
       <file leaf-file-name="User.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/httpServer/services/User.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
-              <caret line="159" column="35" selection-start-line="159" selection-start-column="23" selection-end-line="159" selection-end-column="35" />
+            <state relative-caret-position="3816">
+              <caret line="160" column="35" selection-start-line="160" selection-start-column="35" selection-end-line="160" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -85,7 +83,7 @@
       <file leaf-file-name="response.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../go-resty/resty/response.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
+            <state relative-caret-position="1056">
               <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
             </state>
           </provider>
@@ -158,7 +156,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="159" />
     <option name="y" value="-11" />
     <option name="width" value="1400" />
@@ -172,7 +170,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -221,6 +218,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -424,9 +422,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="197">
           <caret line="16" column="5" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
-          <folding>
-            <element signature="e#16#62#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -467,7 +462,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../go-resty/resty/response.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
+        <state relative-caret-position="1056">
           <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
         </state>
       </provider>
@@ -481,7 +476,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/HttpServer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
+        <state relative-caret-position="624">
           <caret line="36" column="28" selection-start-line="36" selection-start-column="28" selection-end-line="36" selection-end-column="28" />
         </state>
       </provider>
@@ -502,14 +497,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../globalsign/mgo/session.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
+        <state relative-caret-position="59520">
           <caret line="2499" column="21" selection-start-line="2499" selection-start-column="21" selection-end-line="2499" selection-end-column="21" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/models/Users.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
+        <state relative-caret-position="1800">
           <caret line="78" column="54" selection-start-line="78" selection-start-column="54" selection-end-line="78" selection-end-column="54" />
           <folding>
             <element signature="e#16#89#0" expanded="true" />
@@ -519,15 +514,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/services/User.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="159" column="35" selection-start-line="159" selection-start-column="23" selection-end-line="159" selection-end-column="35" />
+        <state relative-caret-position="3816">
+          <caret line="160" column="35" selection-start-line="160" selection-start-column="35" selection-end-line="160" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/controllers/User.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="677">
-          <caret line="135" column="21" lean-forward="true" selection-start-line="135" selection-start-column="21" selection-end-line="135" selection-end-column="21" />
+        <state relative-caret-position="1776">
+          <caret line="87" column="10" lean-forward="true" selection-start-line="87" selection-start-column="10" selection-end-line="87" selection-end-column="10" />
         </state>
       </provider>
     </entry>
