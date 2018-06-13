@@ -13,6 +13,7 @@ type UserModel struct {
 // Users 用户
 type Users struct {
 	ID    bson.ObjectId `bson:"_id"`   // 用户ID
+	VioletID bson.ObjectId `bson:"vid"` // VioletID
 	Name  string        `bson:"name"`  // 用户唯一名字
 	Email string        `bson:"email"` // 邮箱
 	Info  UserInfo      `bson:"info"`  // 用户个性信息
@@ -35,11 +36,19 @@ type UserInfo struct {
 }
 
 // AddUser 添加用户
-func (m *UserModel) AddUser() (bson.ObjectId, error) {
+func (m *UserModel) AddUser(vID, name, email, token, avatar string, gender int) (bson.ObjectId, error) {
 	newUser := bson.NewObjectId()
 	err := m.DB.Insert(&Users{
 		ID:   newUser,
-		Name: "user_" + string(newUser),
+		VioletID: bson.ObjectIdHex(vID),
+		Name: name,
+		Email:email,
+		Info: UserInfo{
+			NikeName: "user_" + newUser.Hex(),
+			Gender:gender,
+			Avatar:avatar,
+		},
+		Token: token,
 	})
 	if err != nil {
 		return "", err
@@ -59,9 +68,21 @@ func (m *UserModel) SetUserName(id, name string) (err error) {
 	return
 }
 
+// SetUserToken 设置Token
+func (m *UserModel) SetUserToken(id, token string) (err error) {
+	_, err = m.DB.UpsertId(bson.ObjectIdHex(id), bson.M{"$set": bson.M{"token": token}})
+	return
+}
+
 // GetUserByID 根据ID查询用户
 func (m *UserModel) GetUserByID(id string) (user Users, err error) {
-	err = m.DB.FindId(id).One(&user)
+	err = m.DB.FindId(bson.ObjectIdHex(id)).One(&user)
+	return
+}
+
+// GetUserByVID 根据VioletID查询用户
+func (m *UserModel) GetUserByVID(id string) (user Users, err error) {
+	err = m.DB.Find(bson.M{"vid": bson.ObjectIdHex(id)}).One(&user)
 	return
 }
 
