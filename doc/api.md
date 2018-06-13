@@ -1,6 +1,6 @@
 # API
 
-##  /users/login
+## POST /users/login
 
 登陆
 
@@ -38,7 +38,7 @@ type LoginReq struct {
 }
 ```
 
-## /users/register
+## POST /users/register
 
 注册
 
@@ -53,6 +53,7 @@ type RegisterReq struct {
 ```
 
 返回
+
 ```json
 {
     "State": "success",
@@ -64,13 +65,26 @@ type RegisterReq struct {
 }
 ```
 
-## /users/email
+## POST /users/email
 
 获取验证码
 
 无参数
 
-## /users/valid
+返回
+
+```json
+{
+    "State": "success",
+    "Data": ""
+}
+{
+    "State": "error",
+    "Data": "not_login"
+}
+```
+
+## POST /users/valid
 
 验证邮箱
 
@@ -83,6 +97,7 @@ type ValidReq struct {
 ```
 
 返回
+
 ```json
 {
     "State": "success",
@@ -94,13 +109,14 @@ type ValidReq struct {
 }
 ```
 
-## /users/logout
+## POST /users/logout
 
 退出登陆
 
 无参数
 
 返回
+
 ```json
 {
     "State": "success",
@@ -108,7 +124,7 @@ type ValidReq struct {
 }
 ```
 
-## /users/userName
+## POST /users/userName
 
 设置用户昵称
 
@@ -121,6 +137,7 @@ type Req struct {
 ```
 
 返回
+
 ```json
 {
     "State": "success",
@@ -133,6 +150,7 @@ type Req struct {
 获取用户状态
 
 返回
+
 ```go
 type UserRes struct {
 	State string
@@ -142,4 +160,5 @@ type UserRes struct {
 	Level int
 }
 ```
+
 state = "success" / "not_login" / "error"
