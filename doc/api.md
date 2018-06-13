@@ -55,11 +55,11 @@ type RegisterReq struct {
 返回
 ```json
 {
-    "State": "success"
+    "State": "success",
     "Data": ""
 }
 {
-    "State": "error"
+    "State": "error",
     "Data": "exist_email"
 }
 ```
@@ -85,11 +85,11 @@ type ValidReq struct {
 返回
 ```json
 {
-    "State": "success"
+    "State": "success",
     "Data": ""
 }
 {
-    "State": "error"
+    "State": "error",
     "Data": "not_login"
 }
 ```
@@ -103,7 +103,7 @@ type ValidReq struct {
 返回
 ```json
 {
-    "State": "success"
+    "State": "success",
     "Data": ""
 }
 ```
@@ -123,7 +123,7 @@ type Req struct {
 返回
 ```json
 {
-    "State": "success"
+    "State": "success",
     "Data": ""
 }
 ```
