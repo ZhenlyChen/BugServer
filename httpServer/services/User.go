@@ -12,11 +12,12 @@ type UserService interface {
 	InitViolet(c violet.Config)
 	// 登陆部分API
 	Login(name, password string) (valid bool, email string, err error)
-	GetUser(code string) (ID string, err error)
+	GetUser(code string) (ID, name string, err error)
 	Register(name, email, password string) (err error)
 	GetEmailCode(email string) error
 	ValidEmail(email, vCode string) error
-	GetUserEmail(id string) (email string, err error)
+	GetUserInfo(id string) (user models.Users, err error)
+	SetUserName(id, name string) error
 }
 
 type userService struct {
@@ -65,7 +66,7 @@ type TokenRes struct {
 	Token  string
 }
 
-func (s *userService) GetUser(code string) (ID string, err error) {
+func (s *userService) GetUser(code string) (ID, name string, err error) {
 	// 获取用户Token
 	resp, tErr := s.Violet.GetToken(code)
 	if tErr != nil {
@@ -84,9 +85,11 @@ func (s *userService) GetUser(code string) (ID string, err error) {
 	user, tErr2 := s.Model.GetUserByVID(tokenRes.UserID)
 	if tErr2 == nil { // 数据库已存在该用户
 		ID = user.ID.Hex()
+		name = user.Info.NikeName
 		s.Model.SetUserToken(user.ID.Hex(), tokenRes.Token)
 	} else if tErr2.Error() == "not found" { // 数据库不存在此用户
 		ID, err = s.SaveUser(tokenRes.UserID, tokenRes.Token)
+		name = "new_user"
 	} else { // 其他错误
 		err = tErr2
 	}
@@ -158,12 +161,14 @@ func (s *userService) ValidEmail(email, vCode string) error {
 	return nil
 }
 
-func (s *userService) GetUserEmail(id string) (email string, err error) {
-	user, err := s.Model.GetUserByID(id)
-	if err == nil {
-		email = user.Email
-	}
+func (s *userService) GetUserInfo(id string) (user models.Users, err error) {
+	user, err = s.Model.GetUserByID(id)
 	return
+}
+
+func (s *userService) SetUserName(id, name string) error {
+	err := s.Model.SetUserName(id, name)
+	return err
 }
 
 func (s *userService) InitViolet(c violet.Config) {

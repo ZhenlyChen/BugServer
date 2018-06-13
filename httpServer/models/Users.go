@@ -18,7 +18,7 @@ type Users struct {
 	Email    string        `bson:"email"` // 邮箱
 	Info     UserInfo      `bson:"info"`  // 用户个性信息
 	Token    string        `bson:"token"` // Violet 访问令牌
-	Level    int64         `bson:"level"` // 用户等级
+	Level    int           `bson:"level"` // 用户等级
 }
 
 // 性别
@@ -56,15 +56,9 @@ func (m *UserModel) AddUser(vID, name, email, token, avatar string, gender int) 
 	return newUser, nil
 }
 
-// SetUserInfo 设置用户信息
-func (m *UserModel) SetUserInfo(id string, info UserInfo) (err error) {
-	_, err = m.DB.UpsertId(bson.ObjectIdHex(id), bson.M{"$set": info})
-	return
-}
-
 // SetUserName 设置用户名
 func (m *UserModel) SetUserName(id, name string) (err error) {
-	_, err = m.DB.UpsertId(bson.ObjectIdHex(id), bson.M{"$set": bson.M{"name": name}})
+	_, err = m.DB.UpsertId(bson.ObjectIdHex(id), bson.M{"$set": bson.M{"info.nikeName": name}})
 	return
 }
 
@@ -86,14 +80,4 @@ func (m *UserModel) GetUserByVID(id string) (user Users, err error) {
 	return
 }
 
-// GetUserByName 根据名字获取用户
-func (m *UserModel) GetUserByName(name string) (user Users, err error) {
-	err = m.DB.Find(bson.M{"name": name}).One(&user)
-	return
-}
 
-// GetUserByEmail 根据邮箱获取用户
-func (m *UserModel) GetUserByEmail(email string) (user Users, err error) {
-	err = m.DB.Find(bson.M{"email": email}).One(&user)
-	return
-}

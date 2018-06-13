@@ -37,7 +37,7 @@ func (c *UsersController) PostLogin() (result CommonRes) {
 		return
 	}
 
-	userID, tErr := c.Service.GetUser(data)
+	userID, nikeName, tErr := c.Service.GetUser(data)
 	if tErr != nil { // 无法获取用户详情
 		result.State = "error"
 		result.Data = tErr.Error()
@@ -46,6 +46,7 @@ func (c *UsersController) PostLogin() (result CommonRes) {
 	c.Session.Set("id", userID)
 
 	result.State = "success"
+	result.Data = nikeName
 	return
 }
 
@@ -73,12 +74,12 @@ func (c *UsersController) PostEmail() (res CommonRes) {
 		res.Data = "not_login"
 		return
 	}
-	email, err := c.Service.GetUserEmail(c.Session.GetString("id"))
+	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
 	if err != nil {
 		res.Data = err.Error()
 		return
 	}
-	err = c.Service.GetEmailCode(email)
+	err = c.Service.GetEmailCode(user.Email)
 	if err != nil {
 		res.State = "error"
 		res.Data = err.Error()
@@ -100,12 +101,12 @@ func (c *UsersController) PostValid() (res CommonRes) {
 		res.Data = "not_login"
 		return
 	}
-	email, err := c.Service.GetUserEmail(c.Session.GetString("id"))
+	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
 	if err != nil {
 		res.Data = err.Error()
 		return
 	}
-	err = c.Service.ValidEmail(email, req.VCode)
+	err = c.Service.ValidEmail(user.Email, req.VCode)
 	if err != nil {
 		res.Data = err.Error()
 	} else {
@@ -117,5 +118,51 @@ func (c *UsersController) PostValid() (res CommonRes) {
 func (c *UsersController) PostLogout() (res CommonRes) {
 	c.Session.Clear()
 	res.State = "success"
+	return
+}
+
+type SetNameReq struct {
+	Name string
+}
+func (c *UsersController) PostUserName() (res CommonRes) {
+	req := SetNameReq{}
+	c.Ctx.ReadForm(&req)
+	if c.Session.Get("id") == nil {
+		res.State = "error"
+		res.Data = "not_login"
+		return
+	}
+	err := c.Service.SetUserName(c.Session.GetString("id"), req.Name)
+	if err != nil {
+		res.State = "error"
+		res.Data = err.Error()
+	} else {
+		res.State = "success"
+	}
+	return
+}
+
+type UserRes struct {
+	State string
+	NikeName string
+	Avatar string
+	Gender int
+	Level int
+}
+func (c *UsersController) GetUserBaseInfo() (res UserRes) {
+	if c.Session.Get("id") == nil {
+		res.State = "not_login"
+		return
+	}
+	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
+	if err != nil {
+		res.State = "error"
+		return
+	}
+	res.State = "success"
+	res.NikeName = user.Info.NikeName
+	res.Avatar = user.Info.Avatar
+	res.Gender = user.Info.Gender
+	res.Level = user.Level
 	return
 }
