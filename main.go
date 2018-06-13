@@ -5,10 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 
-	"gopkg.in/yaml.v2"
 	"github.com/ZhenlyChen/BugServer/httpServer"
+	"gopkg.in/yaml.v2"
 )
-
 
 func main() {
 	// 加载配置文件
@@ -24,4 +23,3 @@ func main() {
 	yaml.Unmarshal(data, &conf)
 	httpServer.RunServer(conf)
 }
-

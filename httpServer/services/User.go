@@ -1,10 +1,11 @@
 package services
 
 import (
+	"encoding/json"
+
 	violet "github.com/XMatrixStudio/Violet.SDK.Go"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
 	"github.com/kataras/iris/core/errors"
-	"encoding/json"
 )
 
 type UserService interface {
@@ -19,7 +20,7 @@ type UserService interface {
 }
 
 type userService struct {
-	Model models.UserModel
+	Model  models.UserModel
 	Violet violet.Violet
 }
 
@@ -61,7 +62,7 @@ func (s *userService) Login(name, password string) (valid bool, data string, err
 
 type TokenRes struct {
 	UserID string
-	Token string
+	Token  string
 }
 
 func (s *userService) GetUser(code string) (ID string, err error) {
@@ -94,8 +95,8 @@ func (s *userService) GetUser(code string) (ID string, err error) {
 
 type UserInfoRes struct {
 	Email string
-	Name string
-	Info UserInfo
+	Name  string
+	Info  UserInfo
 }
 
 type UserInfo struct {
@@ -157,7 +158,7 @@ func (s *userService) ValidEmail(email, vCode string) error {
 	return nil
 }
 
-func (s * userService) GetUserEmail(id string) (email string, err error) {
+func (s *userService) GetUserEmail(id string) (email string, err error) {
 	user, err := s.Model.GetUserByID(id)
 	if err == nil {
 		email = user.Email
@@ -168,4 +169,3 @@ func (s * userService) GetUserEmail(id string) (email string, err error) {
 func (s *userService) InitViolet(c violet.Config) {
 	s.Violet = violet.NewViolet(c)
 }
-

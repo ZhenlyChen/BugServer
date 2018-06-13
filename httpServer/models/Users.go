@@ -12,13 +12,13 @@ type UserModel struct {
 
 // Users 用户
 type Users struct {
-	ID    bson.ObjectId `bson:"_id"`   // 用户ID
-	VioletID bson.ObjectId `bson:"vid"` // VioletID
-	Name  string        `bson:"name"`  // 用户唯一名字
-	Email string        `bson:"email"` // 邮箱
-	Info  UserInfo      `bson:"info"`  // 用户个性信息
-	Token string        `bson:"token"` // Violet 访问令牌
-	Level int64         `bson:"level"` // 用户等级
+	ID       bson.ObjectId `bson:"_id"`   // 用户ID
+	VioletID bson.ObjectId `bson:"vid"`   // VioletID
+	Name     string        `bson:"name"`  // 用户唯一名字
+	Email    string        `bson:"email"` // 邮箱
+	Info     UserInfo      `bson:"info"`  // 用户个性信息
+	Token    string        `bson:"token"` // Violet 访问令牌
+	Level    int64         `bson:"level"` // 用户等级
 }
 
 // 性别
@@ -39,14 +39,14 @@ type UserInfo struct {
 func (m *UserModel) AddUser(vID, name, email, token, avatar string, gender int) (bson.ObjectId, error) {
 	newUser := bson.NewObjectId()
 	err := m.DB.Insert(&Users{
-		ID:   newUser,
+		ID:       newUser,
 		VioletID: bson.ObjectIdHex(vID),
-		Name: name,
-		Email:email,
+		Name:     name,
+		Email:    email,
 		Info: UserInfo{
 			NikeName: "user_" + newUser.Hex(),
-			Gender:gender,
-			Avatar:avatar,
+			Gender:   gender,
+			Avatar:   avatar,
 		},
 		Token: token,
 	})

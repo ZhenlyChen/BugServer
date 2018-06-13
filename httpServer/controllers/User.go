@@ -36,7 +36,7 @@ type LoginReq struct {
 
 type CommonRes struct {
 	State string
-	Data string
+	Data  string
 }
 
 func (c *UsersController) PostLogin() (result CommonRes) {
@@ -45,7 +45,7 @@ func (c *UsersController) PostLogin() (result CommonRes) {
 	valid, data, err := c.Service.Login(req.Name, req.Password)
 	if err != nil { // 与Violet连接发生错误
 		result.State = "error"
-		result.Data =  err.Error()
+		result.Data = err.Error()
 		return
 	}
 	if !valid { // 用户邮箱未激活
@@ -68,7 +68,7 @@ func (c *UsersController) PostLogin() (result CommonRes) {
 
 type RegisterReq struct {
 	Name     string
-	Email 	 string
+	Email    string
 	Password string
 }
 
@@ -105,9 +105,8 @@ func (c *UsersController) PostEmail() (res CommonRes) {
 	return
 }
 
-
 type ValidReq struct {
-	VCode 	 string
+	VCode string
 }
 
 func (c *UsersController) PostValid() (res CommonRes) {

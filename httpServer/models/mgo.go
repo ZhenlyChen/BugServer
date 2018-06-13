@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/globalsign/mgo"
 	"log"
+
+	"github.com/globalsign/mgo"
 )
 
 // Mongo 数据库配置
@@ -16,12 +17,12 @@ type Mongo struct {
 
 type Model struct {
 	Config Mongo
-	DB *mgo.Database
-	User UserModel
+	DB     *mgo.Database
+	User   UserModel
 }
 
 // InitMongo 初始化数据库
-func (m *Model)InitMongo(conf Mongo) error {
+func (m *Model) InitMongo(conf Mongo) error {
 	m.Config = conf
 	if m.DB != nil {
 		m.DB.Session.Close()

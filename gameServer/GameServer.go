@@ -2,12 +2,12 @@ package gameServer
 
 import (
 	"github.com/davyxu/cellnet"
-	"github.com/davyxu/cellnet/peer"
-	"github.com/davyxu/golog"
-	"github.com/davyxu/cellnet/proc"
 	"github.com/davyxu/cellnet/examples/chat/proto"
+	"github.com/davyxu/cellnet/peer"
 	_ "github.com/davyxu/cellnet/peer/tcp"
+	"github.com/davyxu/cellnet/proc"
 	_ "github.com/davyxu/cellnet/proc/tcp"
+	"github.com/davyxu/golog"
 )
 
 type ServerConfig struct {
@@ -21,7 +21,6 @@ type Config struct {
 	Server ServerConfig `yaml:"Server"` // iris配置
 }
 
-
 var log = golog.New("server")
 
 func RunServer(c Config) {
@@ -30,7 +29,7 @@ func RunServer(c Config) {
 	queue := cellnet.NewEventQueue()
 
 	// 创建一个tcp的侦听器，名称为server，连接地址为127.0.0.1:8801，所有连接将事件投递到queue队列,单线程的处理（收发封包过程是多线程）
-	p := peer.NewGenericPeer("tcp.Acceptor", "server", c.Server.Host + ":" + c.Server.Port, queue)
+	p := peer.NewGenericPeer("tcp.Acceptor", "server", c.Server.Host+":"+c.Server.Port, queue)
 
 	// 设定封包收发处理的模式为tcp的ltv(Length-Type-Value), Length为封包大小，Type为消息ID，Value为消息内容
 	// 每一个连接收到的所有消息事件(cellnet.Event)都被派发到用户回调, 用户使用switch判断消息类型，并做出不同的处理

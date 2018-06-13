@@ -3,13 +3,13 @@ package httpServer
 import (
 	"time"
 
+	"github.com/XMatrixStudio/Violet.SDK.Go"
 	"github.com/ZhenlyChen/BugServer/httpServer/controllers"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
-	"github.com/XMatrixStudio/Violet.SDK.Go"
 )
 
 type HttpConfig struct {
@@ -22,9 +22,9 @@ type HttpConfig struct {
 
 // Config 配置文件
 type Config struct {
-	Mongo      models.Mongo `yaml:"Mongo"`  // mongoDB配置
-	HttpServer HttpConfig   `yaml:"Server"` // iris配置
-	Violet 	  	violetSdk.Config `yaml:"Violet"` // Violet配置
+	Mongo      models.Mongo     `yaml:"Mongo"`  // mongoDB配置
+	HttpServer HttpConfig       `yaml:"Server"` // iris配置
+	Violet     violetSdk.Config `yaml:"Violet"` // Violet配置
 }
 
 func RunServer(c Config) {
