@@ -8,6 +8,7 @@ import (
 	"github.com/kataras/iris/core/errors"
 )
 
+// UserService 用户服务
 type UserService interface {
 	InitViolet(c violet.Config)
 	// 登陆部分API
@@ -25,7 +26,7 @@ type userService struct {
 	Violet violet.Violet
 }
 
-type LoginRes struct {
+type loginRes struct {
 	Valid bool
 	Email string
 	Code  string
@@ -43,44 +44,30 @@ func (s *userService) Login(name, password string) (valid bool, data string, err
 		return
 	}
 	// 解析结果
-	var loginRes LoginRes
-	err = json.Unmarshal([]byte(resp.String()), &loginRes)
+	var res loginRes
+	err = json.Unmarshal([]byte(resp.String()), &res)
 	if err != nil {
 		return
 	}
-	valid = loginRes.Valid
+	valid = res.Valid
 	// 未激活邮箱
 	if !valid {
-		data = loginRes.Email
+		data = res.Email
 		return
 	}
 	// 登陆成功
 	valid = true
-	data = loginRes.Code
+	data = res.Code
 	return
 
 }
 
-type TokenRes struct {
-	UserID string
-	Token  string
-}
-
 func (s *userService) GetUser(code string) (ID, name string, err error) {
 	// 获取用户Token
-	resp, tErr := s.Violet.GetToken(code)
-	if tErr != nil {
-		err = tErr
+	tokenRes, err := s.Violet.GetToken(code)
+	if err != nil {
 		return
 	}
-	if resp.StatusCode() != 200 {
-		err = errors.New(resp.String())
-		return
-	}
-	// 解析结果
-	var tokenRes TokenRes
-	err = json.Unmarshal([]byte(resp.String()), &tokenRes)
-
 	// 保存数据并获取用户信息
 	user, tErr2 := s.Model.GetUserByVID(tokenRes.UserID)
 	if tErr2 == nil { // 数据库已存在该用户
@@ -88,43 +75,16 @@ func (s *userService) GetUser(code string) (ID, name string, err error) {
 		name = user.Info.NikeName
 		s.Model.SetUserToken(user.ID.Hex(), tokenRes.Token)
 	} else if tErr2.Error() == "not found" { // 数据库不存在此用户
-		ID, err = s.SaveUser(tokenRes.UserID, tokenRes.Token)
+		userInfoRes, err := s.Violet.GetUserBaseInfo(tokenRes.UserID, tokenRes.Token)
+		if err != nil {
+			return "", "", err
+		}
+		bsonID, err := s.Model.AddUser(tokenRes.UserID, userInfoRes.Name, userInfoRes.Email, tokenRes.Token, userInfoRes.Info.Avatar, userInfoRes.Info.Gender)
+		ID = bsonID.Hex()
 		name = "new_user"
 	} else { // 其他错误
 		err = tErr2
 	}
-	return
-}
-
-type UserInfoRes struct {
-	Email string
-	Name  string
-	Info  UserInfo
-}
-
-type UserInfo struct {
-	Avatar string
-	Gender int
-}
-
-func (s *userService) SaveUser(userVID, token string) (ID string, err error) {
-	resp, err := s.Violet.GetUserBaseInfo(userVID, token)
-	if err != nil {
-		return
-	}
-	if resp.StatusCode() != 200 {
-		err = errors.New(resp.String())
-		return
-	}
-	// 解析结果
-	var userInfoRes UserInfoRes
-	err = json.Unmarshal([]byte(resp.String()), &userInfoRes)
-	if err != nil {
-		return
-	}
-
-	bsonID, err := s.Model.AddUser(userVID, userInfoRes.Name, userInfoRes.Email, token, userInfoRes.Info.Avatar, userInfoRes.Info.Gender)
-	ID = bsonID.Hex()
 	return
 }
 
