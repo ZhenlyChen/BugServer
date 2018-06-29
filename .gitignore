@@ -1,2 +1,3 @@
 bin/Main.exe
 config/config.yaml
+.idea/*
