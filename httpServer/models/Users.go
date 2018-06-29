@@ -17,7 +17,6 @@ type Users struct {
 	Name     string        `bson:"name"`  // 用户唯一名字
 	Email    string        `bson:"email"` // 邮箱
 	Info     UserInfo      `bson:"info"`  // 用户个性信息
-	Token    string        `bson:"token"` // Violet 访问令牌
 	Level    int           `bson:"level"` // 用户等级
 }
 
@@ -36,7 +35,7 @@ type UserInfo struct {
 }
 
 // AddUser 添加用户
-func (m *UserModel) AddUser(vID, name, email, token, avatar string, gender int) (bson.ObjectId, error) {
+func (m *UserModel) AddUser(vID, name, email string) (bson.ObjectId, error) {
 	newUser := bson.NewObjectId()
 	err := m.DB.Insert(&Users{
 		ID:       newUser,
@@ -45,21 +44,13 @@ func (m *UserModel) AddUser(vID, name, email, token, avatar string, gender int) 
 		Email:    email,
 		Info: UserInfo{
 			NikeName: "user_" + newUser.Hex(),
-			Gender:   gender,
-			Avatar:   avatar,
+			Avatar:  "default",
 		},
-		Token: token,
 	})
 	if err != nil {
 		return "", err
 	}
 	return newUser, nil
-}
-
-// SetUserName 设置用户名
-func (m *UserModel) SetUserName(id, name string) (err error) {
-	_, err = m.DB.UpsertId(bson.ObjectIdHex(id), bson.M{"$set": bson.M{"info.nikeName": name}})
-	return
 }
 
 // SetUserToken 设置Token
@@ -80,4 +71,8 @@ func (m *UserModel) GetUserByVID(id string) (user Users, err error) {
 	return
 }
 
+// SetUserInfo 设置用户信息
+func (m *UserModel) SetUserInfo(id string, info UserInfo) error {
+	return m.DB.UpdateId(bson.ObjectIdHex(id), bson.M{"$set": bson.M{"info": info}})
+}
 

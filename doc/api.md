@@ -8,8 +8,8 @@
 
 ```go
 type LoginReq struct {
-	Name     string
-	Password string
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 ```
 
@@ -46,9 +46,9 @@ type LoginReq struct {
 
 ```go
 type RegisterReq struct {
-	Name     string
-	Email    string
-	Password string
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 ```
 
@@ -59,13 +59,39 @@ type RegisterReq struct {
     "State": "success",
     "Data": ""
 }
+// 邮箱无效 /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
 {
-    "State": "error",
-    "Data": "exist_email"
+    "State": "invalid_email",
+    "Data": ""
+}
+// 用户名无效 [a-zA-Z][a-zA-Z0-9_]{0,31}
+{
+    "State": "invalid_name",
+    "Data": ""
+}
+// 密码无效 >512
+{
+    "State": "invalid_password",
+    "Data": ""
+}
+// 邮箱已存在
+{
+    "State": "exist_email",
+    "Data": ""
+}
+// 用户名已存在
+{
+    "State": "exist_name",
+    "Data": ""
+}
+// 用户名为保留字
+{
+    "State": "reserved_name",
+    "Data": ""
 }
 ```
 
-## POST /users/email
+## POST /user/email
 
 获取验证码
 
@@ -79,12 +105,12 @@ type RegisterReq struct {
     "Data": ""
 }
 {
-    "State": "error",
-    "Data": "not_login"
+    "State": "not_login",
+    "Data": ""
 }
 ```
 
-## POST /users/valid
+## POST /user/valid
 
 验证邮箱
 
@@ -92,7 +118,7 @@ type RegisterReq struct {
 
 ```go
 type ValidReq struct {
-	VCode string
+	VCode string `json:"vCode"`
 }
 ```
 
@@ -104,8 +130,8 @@ type ValidReq struct {
     "Data": ""
 }
 {
-    "State": "error",
-    "Data": "not_login"
+    "State": "not_login",
+    "Data": ""
 }
 ```
 
@@ -124,15 +150,17 @@ type ValidReq struct {
 }
 ```
 
-## POST /users/userName
+## POST /users/Info
 
-设置用户昵称
+设置用户信息
 
 参数
 
 ```go
-type Req struct {
-	Name string
+type InfoReq struct {
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
+	Gender int    `json:"gender"`
 }
 ```
 
@@ -140,25 +168,33 @@ type Req struct {
 
 ```json
 {
-    "State": "success",
-    "Data": ""
+    "status": "success",
+    "msg": ""
 }
 ```
 
-## GET /users/userBaseInfo
+## GET /user/info/{userID} 
 
-获取用户状态
+获取用户信息，userID为空时候获取自身信息
 
 返回
 
 ```go
 type UserRes struct {
-	State string
-	NikeName string
-	Avatar string
-	Gender int
-	Level int
+	Status   string `json:"status"`
+	NikeName string `json:"nikeName"`
+	Avatar   string `json:"avatar"`
+	Gender   int    `json:"gender"`
+	Level    int    `json:"level"`
 }
+// 成功
+status = "success"
+// 未登录
+status = "not_login"
+// 非法请求
+status = "bad_req"
+// 内部错误
+status = "error"
 ```
 
-state = "success" / "not_login" / "error"
+

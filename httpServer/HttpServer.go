@@ -35,8 +35,6 @@ func RunServer(c Config) {
 	}
 	// 初始化服务
 	Service := services.NewService(Model)
-	userService := Service.NewUserService()
-	userService.InitViolet(c.Violet)
 
 	// 启动服务器
 	app := iris.New()
@@ -44,14 +42,15 @@ func RunServer(c Config) {
 		app.Logger().SetLevel("debug")
 	}
 
-	sessManager := sessions.New(sessions.Config{
+	sessionManager := sessions.New(sessions.Config{
 		Cookie:  "sessionBug",
 		Expires: 24 * time.Hour,
 	})
-	// "/users" based mvc application.
-	users := mvc.New(app.Party("/users"))
-	// Bind the "userService" to the UserController's Service (interface) field.
-	users.Register(userService, sessManager.Start)
+
+	users := mvc.New(app.Party("/user"))
+	userService := Service.NewUserService()
+	userService.InitViolet(c.Violet)
+	users.Register(userService, sessionManager.Start)
 	users.Handle(new(controllers.UsersController))
 
 	app.Run(

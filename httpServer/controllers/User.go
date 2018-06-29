@@ -4,162 +4,199 @@ import (
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/sessions"
+	"github.com/globalsign/mgo/bson"
+	"regexp"
+	"html/template"
+	"github.com/ZhenlyChen/BugServer/httpServer/models"
 )
 
+// UsersController 用户控制
 type UsersController struct {
-	Ctx iris.Context
+	Ctx     iris.Context
 	Service services.UserService
 	Session *sessions.Session
 }
 
-type LoginReq struct {
-	Name     string
-	Password string
-}
-
+// CommonRes 一般返回值
 type CommonRes struct {
-	State string
-	Data  string
+	Status string `json:"status"`
+	Msg    string `json:"msg"`
 }
 
+// LoginReq OST /user/login 登陆请求
+type LoginReq struct {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+}
+
+// PostLogin POST /user/login 登陆
 func (c *UsersController) PostLogin() (result CommonRes) {
 	req := LoginReq{}
 	c.Ctx.ReadForm(&req)
 	valid, data, err := c.Service.Login(req.Name, req.Password)
 	if err != nil { // 与Violet连接发生错误
-		result.State = "error"
-		result.Data = err.Error()
+		result.Status = "error"
+		result.Msg = err.Error()
 		return
 	}
 	if !valid { // 用户邮箱未激活
-		result.State = "not_valid"
-		result.Data = data
+		result.Status = "not_valid"
+		result.Msg = data
 		return
 	}
 
-	userID, nikeName, tErr := c.Service.GetUser(data)
+	userID, nikeName, tErr := c.Service.GetUserFromViolet(data)
 	if tErr != nil { // 无法获取用户详情
-		result.State = "error"
-		result.Data = tErr.Error()
+		result.Status = "error"
+		result.Msg = tErr.Error()
 		return
 	}
 	c.Session.Set("id", userID)
 
-	result.State = "success"
-	result.Data = nikeName
+	result.Status = "success"
+	result.Msg = nikeName
 	return
 }
 
+// RegisterReq POST /user/register 注册请求
 type RegisterReq struct {
-	Name     string
-	Email    string
-	Password string
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
+// PostRegister POST /user/register 注册
 func (c *UsersController) PostRegister() (res CommonRes) {
 	req := RegisterReq{}
-	c.Ctx.ReadForm(&req)
-	err := c.Service.Register(req.Name, req.Email, req.Password)
-	if err != nil {
-		res.State = "error"
-		res.Data = err.Error()
+	if err := c.Ctx.ReadForm(&req); err != nil {
+		res.Status = "bad_req"
+	}
+	if err := c.Service.Register(req.Name, req.Email, req.Password); err != nil {
+		res.Status = err.Error()
 	} else {
-		res.State = "success"
+		res.Status = "success"
 	}
 	return
 }
 
+// PostEmail POST /user/email 获取邮箱验证码
 func (c *UsersController) PostEmail() (res CommonRes) {
 	if c.Session.Get("id") == nil {
-		res.Data = "not_login"
+		res.Status = "not_login"
 		return
 	}
 	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
 	if err != nil {
-		res.Data = err.Error()
+		res.Status = err.Error()
 		return
 	}
-	err = c.Service.GetEmailCode(user.Email)
-	if err != nil {
-		res.State = "error"
-		res.Data = err.Error()
+	if err := c.Service.GetEmailCode(user.Email); err != nil {
+		res.Status = err.Error()
 	} else {
-		res.State = "success"
+		res.Status = "success"
 	}
 	return
 }
 
+// ValidReq POST /user/valid/ 请求
 type ValidReq struct {
-	VCode string
+	VCode string `json:"vCode"`
 }
 
+// PostValid POST /user/valid/ 验证邮箱
 func (c *UsersController) PostValid() (res CommonRes) {
-	req := ValidReq{}
-	res.State = "error"
-	c.Ctx.ReadForm(&req)
 	if c.Session.Get("id") == nil {
-		res.Data = "not_login"
+		res.Status = "not_login"
 		return
+	}
+	req := ValidReq{}
+	if err := c.Ctx.ReadForm(&req); err != nil {
+		res.Status = "bad_req"
 	}
 	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
 	if err != nil {
-		res.Data = err.Error()
+		res.Msg = err.Error()
 		return
 	}
-	err = c.Service.ValidEmail(user.Email, req.VCode)
-	if err != nil {
-		res.Data = err.Error()
+	if err := c.Service.ValidEmail(user.Email, req.VCode); err != nil {
+		res.Status = err.Error()
 	} else {
-		res.State = "success"
+		res.Status = "success"
 	}
 	return
 }
 
+// POST /user/logout 退出登陆
 func (c *UsersController) PostLogout() (res CommonRes) {
 	c.Session.Clear()
-	res.State = "success"
+	res.Status = "success"
 	return
 }
 
-type SetNameReq struct {
-	Name string
+// InfoReq POST /user/info 请求结构
+type InfoReq struct {
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
+	Gender int    `json:"gender"`
 }
-func (c *UsersController) PostUserName() (res CommonRes) {
-	req := SetNameReq{}
-	c.Ctx.ReadForm(&req)
+
+// PostInfo POST /user/info 更新信息
+func (c *UsersController) PostInfo() (res CommonRes) {
 	if c.Session.Get("id") == nil {
-		res.State = "error"
-		res.Data = "not_login"
+		res.Status = "not_login"
 		return
 	}
-	err := c.Service.SetUserName(c.Session.GetString("id"), req.Name)
-	if err != nil {
-		res.State = "error"
-		res.Data = err.Error()
+	// 检测姓名合法性
+	req := InfoReq{}
+	if err := c.Ctx.ReadForm(&req); err != nil || req.Name == "" || len(req.Name) > 20 {
+		res.Status = "error_name"
+		return
+	}
+	// 检测非法字符
+	if m, _ := regexp.MatchString(`[\\\/\(\)<|> "'{}:;]`, req.Name); m {
+		res.Status = "error_name"
+		return
+	}
+	req.Name = template.HTMLEscapeString(req.Name)
+	if err := c.Service.SetUserInfo(c.Session.GetString("id"), models.UserInfo{
+		NikeName: req.Name,
+		Avatar:   req.Avatar,
+		Gender:   req.Gender,
+	}); err != nil {
+		res.Status = err.Error()
 	} else {
-		res.State = "success"
+		res.Status = "success"
 	}
 	return
 }
 
+// UserRes GET /user/info/{userID} 返回值
 type UserRes struct {
-	State string
-	NikeName string
-	Avatar string
-	Gender int
-	Level int
+	Status   string `json:"status"`
+	NikeName string `json:"nikeName"`
+	Avatar   string `json:"avatar"`
+	Gender   int    `json:"gender"`
+	Level    int    `json:"level"`
 }
-func (c *UsersController) GetUserBaseInfo() (res UserRes) {
+
+// GetInfoBy GET /user/info/{userID} 获取用户信息，userID为空时候获取自身信息
+func (c *UsersController) GetInfoBy(id string) (res UserRes) {
 	if c.Session.Get("id") == nil {
-		res.State = "not_login"
+		res.Status = "not_login"
 		return
 	}
-	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
+	if id != "" && !bson.IsObjectIdHex(id) {
+		res.Status = "bad_req"
+		return
+	} else if id == "" {
+		id = c.Session.GetString("id")
+	}
+	user, err := c.Service.GetUserInfo(id)
 	if err != nil {
-		res.State = "error"
+		res.Status = "error"
 		return
 	}
-	res.State = "success"
+	res.Status = "success"
 	res.NikeName = user.Info.NikeName
 	res.Avatar = user.Info.Avatar
 	res.Gender = user.Info.Gender

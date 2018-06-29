@@ -1,11 +1,9 @@
 package services
 
 import (
-	"encoding/json"
-
 	violet "github.com/XMatrixStudio/Violet.SDK.Go"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
-	"github.com/kataras/iris/core/errors"
+	"github.com/globalsign/mgo"
 )
 
 // UserService 用户服务
@@ -13,39 +11,33 @@ type UserService interface {
 	InitViolet(c violet.Config)
 	// 登陆部分API
 	Login(name, password string) (valid bool, email string, err error)
-	GetUser(code string) (ID, name string, err error)
+	GetUserFromViolet(code string) (ID, name string, err error)
 	Register(name, email, password string) (err error)
 	GetEmailCode(email string) error
 	ValidEmail(email, vCode string) error
+	// 用户信息 API
+	GetUserBaseInfo(id string) (user UserBaseInfo)
 	GetUserInfo(id string) (user models.Users, err error)
-	SetUserName(id, name string) error
+	SetUserInfo(id string, info models.UserInfo) error
 }
 
 type userService struct {
-	Model  models.UserModel
-	Violet violet.Violet
+	Model    *models.UserModel
+	Violet   violet.Violet
+	UserInfo map[string]UserBaseInfo
+	Service  *Service
 }
 
-type loginRes struct {
-	Valid bool
-	Email string
-	Code  string
+// UserBaseInfo 用户个性信息
+type UserBaseInfo struct {
+	Name   string
+	Avatar string
+	Gender int
 }
 
+// Login ...
 func (s *userService) Login(name, password string) (valid bool, data string, err error) {
-	resp, tErr := s.Violet.Login(name, password)
-	if tErr != nil {
-		err = tErr
-		return
-	}
-	// 非正常的返回码
-	if resp.StatusCode() != 200 {
-		err = errors.New(resp.String())
-		return
-	}
-	// 解析结果
-	var res loginRes
-	err = json.Unmarshal([]byte(resp.String()), &res)
+	res, err := s.Violet.Login(name, password)
 	if err != nil {
 		return
 	}
@@ -56,81 +48,79 @@ func (s *userService) Login(name, password string) (valid bool, data string, err
 		return
 	}
 	// 登陆成功
-	valid = true
 	data = res.Code
 	return
-
 }
 
-func (s *userService) GetUser(code string) (ID, name string, err error) {
+// GetUserFromViolet ...
+func (s *userService) GetUserFromViolet(code string) (ID, name string, err error) {
 	// 获取用户Token
 	tokenRes, err := s.Violet.GetToken(code)
 	if err != nil {
 		return
 	}
 	// 保存数据并获取用户信息
-	user, tErr2 := s.Model.GetUserByVID(tokenRes.UserID)
-	if tErr2 == nil { // 数据库已存在该用户
+	if user, tErr := s.Model.GetUserByVID(tokenRes.UserID); tErr == nil { // 数据库已存在该用户
 		ID = user.ID.Hex()
 		name = user.Info.NikeName
 		s.Model.SetUserToken(user.ID.Hex(), tokenRes.Token)
-	} else if tErr2.Error() == "not found" { // 数据库不存在此用户
-		userInfoRes, err := s.Violet.GetUserBaseInfo(tokenRes.UserID, tokenRes.Token)
+	} else if tErr == mgo.ErrNotFound { // 数据库不存在此用户
+		userInfoRes, tErr := s.Violet.GetUserBaseInfo(tokenRes.UserID, tokenRes.Token)
 		if err != nil {
-			return "", "", err
+			return "", "", tErr
 		}
-		bsonID, err := s.Model.AddUser(tokenRes.UserID, userInfoRes.Name, userInfoRes.Email, tokenRes.Token, userInfoRes.Info.Avatar, userInfoRes.Info.Gender)
+		bsonID, tErr := s.Model.AddUser(tokenRes.UserID, userInfoRes.Name, userInfoRes.Email)
+		err = tErr
 		ID = bsonID.Hex()
 		name = "new_user"
 	} else { // 其他错误
-		err = tErr2
+		err = tErr
 	}
 	return
 }
 
 func (s *userService) Register(name, email, password string) error {
-	resp, err := s.Violet.Register(name, email, password)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode() != 200 {
-		return errors.New(resp.String())
-	}
-	return nil
+	return s.Violet.Register(name, email, password)
 }
 
 func (s *userService) GetEmailCode(email string) error {
-	resp, err := s.Violet.GetEmailCode(email)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode() != 200 {
-		return errors.New(resp.String())
-	}
-	return nil
+	return s.Violet.GetEmailCode(email)
 }
 
 func (s *userService) ValidEmail(email, vCode string) error {
-	resp, err := s.Violet.ValidEmail(email, vCode)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode() != 200 {
-		return errors.New(resp.String())
-	}
-	return nil
+	return s.Violet.ValidEmail(email, vCode)
 }
 
 func (s *userService) GetUserInfo(id string) (user models.Users, err error) {
-	user, err = s.Model.GetUserByID(id)
-	return
+	return s.Model.GetUserByID(id)
 }
 
-func (s *userService) SetUserName(id, name string) error {
-	err := s.Model.SetUserName(id, name)
-	return err
+func (s *userService) SetUserInfo(id string, info models.UserInfo) error {
+	return s.Model.SetUserInfo(id, info)
 }
 
 func (s *userService) InitViolet(c violet.Config) {
 	s.Violet = violet.NewViolet(c)
+}
+
+// GetUserBaseInfo 从缓存中读取用户基本信息，如果不存在则从数据库中读取
+func (s *userService) GetUserBaseInfo(id string) (user UserBaseInfo) {
+	user, ok := s.UserInfo[id]
+	if !ok {
+		userInfo, err := s.GetUserInfo(id)
+		if err != nil {
+			return UserBaseInfo{
+				Name:   "匿名用户",
+				Avatar: "default",
+				Gender: 0,
+			}
+		}
+		user = UserBaseInfo{
+			Name:   userInfo.Info.NikeName,
+			Avatar: userInfo.Info.Avatar,
+			Gender: userInfo.Info.Gender,
+		}
+		s.UserInfo[id] = user
+	}
+	return
 }
