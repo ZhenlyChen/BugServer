@@ -1,73 +1,74 @@
 package gameServer
 
 import (
-	"github.com/davyxu/cellnet"
-	"github.com/davyxu/cellnet/examples/chat/proto"
-	"github.com/davyxu/cellnet/peer"
-	_ "github.com/davyxu/cellnet/peer/tcp"
-	"github.com/davyxu/cellnet/proc"
-	_ "github.com/davyxu/cellnet/proc/tcp"
-	"github.com/davyxu/golog"
+	"net"
+	"fmt"
+	"os"
+	"strconv"
+	"sync"
 )
 
 type ServerConfig struct {
-	Host string `yaml:"Host"` // 服务器监听地址
-	Port string `yaml:"Port"` // 服务器监听端口
-	Dev  bool   `yaml:"Dev"`  // 是否开发环境
+	PortPoolBegin int `yaml:"PortPoolBegin"` // 游戏服务器地址池开始
+	PortPoolSize  int `yaml:"PortPoolSize"`  // 最大负载
 }
 
-// Config 配置文件
-type Config struct {
-	Server ServerConfig `yaml:"Server"` // iris配置
+type GameServer struct {
+	Config      ServerConfig
+	CurrentLoad int
+	Room        []RoomData
 }
 
-var log = golog.New("server")
+type RoomData struct {
+	conn         *net.UDPConn
+	Players      []Player
+	Frame        []FrameState
+	CurrentFrame int
+	People       int
+	Running      bool
+	Lock         *sync.RWMutex
+}
 
-func RunServer(c Config) {
+type Player struct {
+	IP        *net.UDPAddr
+	ID        int
+	Frame     int
+	MissFrame int
+}
 
-	// 创建一个事件处理队列，整个服务器只有这一个队列处理事件，服务器属于单线程服务器
-	queue := cellnet.NewEventQueue()
+func (s *GameServer) InitServer(c ServerConfig) {
+	s.Config = c
+	s.CurrentLoad = 0
+}
 
-	// 创建一个tcp的侦听器，名称为server，连接地址为127.0.0.1:8801，所有连接将事件投递到queue队列,单线程的处理（收发封包过程是多线程）
-	p := peer.NewGenericPeer("tcp.Acceptor", "server", c.Server.Host+":"+c.Server.Port, queue)
-
-	// 设定封包收发处理的模式为tcp的ltv(Length-Type-Value), Length为封包大小，Type为消息ID，Value为消息内容
-	// 每一个连接收到的所有消息事件(cellnet.Event)都被派发到用户回调, 用户使用switch判断消息类型，并做出不同的处理
-	proc.BindProcessorHandler(p, "tcp.ltv", func(ev cellnet.Event) {
-
-		switch msg := ev.Message().(type) {
-		// 有新的连接
-		case *cellnet.SessionAccepted:
-			log.Debugln("server accepted")
-			// 有连接断开
-		case *cellnet.SessionClosed:
-			log.Debugln("session closed: ", ev.Session().ID())
-			// 收到某个连接的ChatREQ消息
-		case *proto.ChatREQ:
-			// 准备回应的消息
-			ack := proto.ChatACK{
-				Content: msg.Content,       // 聊天内容
-				Id:      ev.Session().ID(), // 使用会话ID作为发送内容的ID
-			}
-
-			// 在Peer上查询SessionAccessor接口，并遍历Peer上的所有连接，并发送回应消息（即广播消息）
-			p.(cellnet.SessionAccessor).VisitSession(func(ses cellnet.Session) bool {
-
-				ses.Send(&ack)
-
-				return true
-			})
-
-		}
-
+// NewRoom 开房
+func (s *GameServer) NewRoom(people int) (port int) {
+	if s.CurrentLoad > s.Config.PortPoolSize {
+		// 负载以达上限
+		return -1
+	}
+	service := ":" + strconv.Itoa(s.Config.PortPoolBegin+s.CurrentLoad)
+	udpAddr, err := net.ResolveUDPAddr("udp4", service)
+	checkError(err)
+	conn, err := net.ListenUDP("udp", udpAddr)
+	checkError(err)
+	fmt.Println("GameServer is running in " + service)
+	s.Room = append(s.Room, RoomData{
+		Players:      []Player{},
+		Frame:        []FrameState{},
+		CurrentFrame: 0,
+		People:       people,
+		Running:      false,
+		Lock:         new(sync.RWMutex),
 	})
+	fmt.Println(s.Room)
+	go s.handleClient(conn, s.CurrentLoad)
+	s.CurrentLoad++
+	return s.Config.PortPoolBegin + s.CurrentLoad - 1
+}
 
-	// 开始侦听
-	p.Start()
-
-	// 事件队列开始循环
-	queue.StartLoop()
-
-	// 阻塞等待事件队列结束退出( 在另外的goroutine调用queue.StopLoop() )
-	queue.Wait()
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error ", err.Error())
+	}
 }

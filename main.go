@@ -9,6 +9,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+
+
 func main() {
 	// 加载配置文件
 	configFile := flag.String("c", "config/config.yaml", "Where is your config file?")
