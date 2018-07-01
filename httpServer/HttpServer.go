@@ -11,6 +11,8 @@ import (
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
 	"github.com/ZhenlyChen/BugServer/gameServer"
+	"github.com/betacraft/yaag/yaag"
+	"github.com/betacraft/yaag/irisyaag"
 )
 
 type ServerConfig struct {
@@ -38,6 +40,15 @@ func RunServer(c Config) {
 
 	// 启动服务器
 	app := iris.New()
+
+	// 文档生成器
+	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. On: true,
+		DocTitle: "Iris",
+		DocPath: "apidoc.html",
+		BaseUrls: map[string]string{"Production": "", "Staging": ""},
+	})
+	app.Use(irisyaag.New())
+
 	if c.Server.Dev {
 		app.Logger().SetLevel("debug")
 	}
@@ -53,9 +64,11 @@ func RunServer(c Config) {
 	users.Register(userService, sessionManager.Start)
 	users.Handle(new(controllers.UsersController))
 
+	rooms := mvc.New(app.Party("/room"))
 	roomService := Service.GetRoomService()
 	roomService.InitGameServer(c.Server.Game)
-	roomService.NewRoom()
+	rooms.Register(roomService, sessionManager.Start)
+	rooms.Handle(new(controllers.RoomsController))
 
 	app.Run(
 		// Starts the web server

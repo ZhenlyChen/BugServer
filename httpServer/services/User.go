@@ -30,9 +30,9 @@ type userService struct {
 
 // UserBaseInfo 用户个性信息
 type UserBaseInfo struct {
-	Name   string
-	Avatar string
-	Gender int
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
+	Gender int    `json:"gender"`
 }
 
 // Login ...
