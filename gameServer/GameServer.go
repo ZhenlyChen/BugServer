@@ -1,24 +1,26 @@
-package gameServer
+package gameserver
 
 import (
-	"net"
 	"fmt"
-	"os"
+	"net"
 	"strconv"
 	"sync"
 )
 
+// ServerConfig ...
 type ServerConfig struct {
 	PortPoolBegin int `yaml:"PortPoolBegin"` // 游戏服务器地址池开始
 	PortPoolSize  int `yaml:"PortPoolSize"`  // 最大负载
 }
 
+// GameServer ...
 type GameServer struct {
 	Config      ServerConfig
 	CurrentLoad int
 	Room        []RoomData
 }
 
+// RoomData ...
 type RoomData struct {
 	conn         *net.UDPConn
 	Players      []Player
@@ -29,6 +31,7 @@ type RoomData struct {
 	Lock         *sync.RWMutex
 }
 
+// Player ...
 type Player struct {
 	IP        *net.UDPAddr
 	ID        int
@@ -36,6 +39,7 @@ type Player struct {
 	MissFrame int
 }
 
+// InitServer 初始化游戏服务器
 func (s *GameServer) InitServer(c ServerConfig) {
 	s.Config = c
 	s.CurrentLoad = 0
@@ -69,6 +73,6 @@ func (s *GameServer) NewRoom(people int) (port int) {
 
 func checkError(err error) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Fatal error ", err.Error())
+		fmt.Println("Fatal error ", err.Error())
 	}
 }

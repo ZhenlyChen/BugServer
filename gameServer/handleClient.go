@@ -1,22 +1,25 @@
-package gameServer
+package gameserver
 
 import (
-	"encoding/json"
 	"bytes"
-	"net"
+	"encoding/json"
 	"fmt"
+	"net"
 )
 
+// UserData ...
 type UserData struct {
 	ID    int `json:"id"`
 	Input int `json:"input"`
 }
 
+// UserBack ...
 type UserBack struct {
 	ID    int `json:"id"`
 	Frame int `json:"frame"`
 }
 
+// UserComeIn ...
 type UserComeIn struct {
 	ID int `json:"id"`
 }
@@ -56,9 +59,9 @@ func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 	// fmt.Println(string(buf[1 : bytes.IndexByte(buf[1:], 0)+1]))
 	if err := json.Unmarshal(buf[1:bytes.IndexByte(buf[1:], 0)+1], &data); err == nil {
 		s.Room[id].Players = append(s.Room[id].Players, Player{
-			IP:    addr,
-			ID:    data.ID,
-			Frame:  0,
+			IP:        addr,
+			ID:        data.ID,
+			Frame:     0,
 			MissFrame: 0,
 		})
 		if len(s.Room[id].Players) == s.Room[id].People && s.Room[id].Running == false {
@@ -66,7 +69,7 @@ func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 			go s.sendAll(id)
 		}
 		fmt.Println("Come in ", addr.String())
-		fmt.Println(len(s.Room[id].Players) ,'/', s.Room[id].People)
+		fmt.Println(len(s.Room[id].Players), '/', s.Room[id].People)
 	}
 }
 
@@ -78,7 +81,7 @@ func (s *GameServer) setInput(id int, buf *[1024]byte) {
 		currentFrame := s.Room[id].CurrentFrame - 1
 		s.Room[id].Frame[currentFrame].Commends = append(s.Room[id].Frame[currentFrame].Commends, Commend{
 			UserID: data.ID,
-			Input: data.Input,
+			Input:  data.Input,
 		})
 		s.Room[id].Lock.Unlock()
 	}

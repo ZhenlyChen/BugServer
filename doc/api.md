@@ -571,3 +571,76 @@ status = "max_server"
 status = "one_team"
 ```
 
+
+
+## GameServer
+
+基于帧同步队列
+
+以下为UDP请求
+
+### 请求
+
+#### 加入对局
+
+```go
+0
+// UserComeIn ...
+type UserComeIn struct {
+	ID int `json:"id"`
+}
+```
+
+#### 退出对局
+
+```go
+3
+```
+
+#### 发送命令
+
+```go
+1
+type UserData struct {
+	ID    int `json:"id"`
+	Input int `json:"input"`
+}
+```
+
+#### 设置当前帧数
+
+```go
+2
+type UserBack struct {
+	ID    int `json:"id"`
+	Frame int `json:"frame"`
+}
+```
+
+
+
+### 返回
+
+#### 当前数据
+
+一次性最多返回10帧数据
+
+```go
+// ResData ...
+type ResData struct {
+	Data []FrameState `json:"data"`
+}
+
+// FrameState ...
+type FrameState struct {
+	FrameID  int       `json:"frameID"`
+	Commends []Commend `json:"commends"`
+}
+
+// Commend ...
+type Commend struct {
+	UserID int `json:"id"`
+	Input  int `json:"input"`
+}
+```
+

@@ -1,4 +1,4 @@
-package gameServer
+package gameserver
 
 import (
 	"encoding/json"
@@ -6,17 +6,20 @@ import (
 	"time"
 )
 
+// ResData ...
 type ResData struct {
 	Data []FrameState `json:"data"`
 }
 
+// FrameState ...
 type FrameState struct {
 	FrameID  int       `json:"frameID"`
 	Commends []Commend `json:"commends"`
 }
 
+// Commend ...
 type Commend struct {
-	UserID int   `json:"id"`
+	UserID int `json:"id"`
 	Input  int `json:"input"`
 }
 
@@ -25,19 +28,18 @@ func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 	var res ResData
 	// 检测是否掉线
 	fmt.Println(s.Room[rID].Players[pID].MissFrame)
-	if s.Room[rID].Players[pID].MissFrame > 100  {
+	if s.Room[rID].Players[pID].MissFrame > 100 {
 		// 判断为已经掉线
 		s.goOutRoom(rID, s.Room[rID].Players[pID].IP)
 		c <- 0
 		return
-	} else {
-		s.Room[rID].Players[pID].MissFrame++
 	}
+	s.Room[rID].Players[pID].MissFrame++
 	// 读取帧数据, 共享锁
 	s.Room[rID].Lock.RLock()
-	if s.Room[rID].CurrentFrame - s.Room[rID].Players[pID].Frame > 10 {
+	if s.Room[rID].CurrentFrame-s.Room[rID].Players[pID].Frame > 10 {
 		res = ResData{
-			Data: s.Room[rID].Frame[s.Room[rID].Players[pID].Frame:s.Room[rID].Players[pID].Frame + 10],
+			Data: s.Room[rID].Frame[s.Room[rID].Players[pID].Frame : s.Room[rID].Players[pID].Frame+10],
 		}
 	} else {
 		res = ResData{
@@ -53,7 +55,6 @@ func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 	c <- 0
 }
 
-
 func (s *GameServer) sendAll(id int) {
 	s.Room[id].Running = true
 	for {
@@ -64,7 +65,7 @@ func (s *GameServer) sendAll(id int) {
 			go s.sendToPlayer(id, i, c)
 		}
 		for i := 0; i < playerCount; i++ {
-			<- c
+			<-c
 		}
 		close(c)
 		// 增加新的帧， 互斥锁

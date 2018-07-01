@@ -1,13 +1,13 @@
 package services
 
 import (
-	"github.com/ZhenlyChen/BugServer/gameServer"
+	"github.com/ZhenlyChen/BugServer/gameserver"
 	"github.com/kataras/iris/core/errors"
 )
 
 // RoomService ...
 type RoomService interface {
-	InitGameServer(config gameServer.ServerConfig)
+	InitGameServer(config gameserver.ServerConfig)
 
 	GetRoom(roomID int) (room *GameRoom, err error)
 	JoinRoom(roomID int, userID, password string) error
@@ -27,7 +27,7 @@ type RoomService interface {
 
 type roomService struct {
 	Service *Service
-	Game    *gameServer.GameServer
+	Game    *gameserver.GameServer
 	Rooms   []GameRoom
 }
 
@@ -75,8 +75,8 @@ type Player struct {
 	Team    int    `json:"team"`    // "1-4" - 队伍一~四
 }
 
-func (s *roomService) InitGameServer(config gameServer.ServerConfig) {
-	s.Game = new(gameServer.GameServer)
+func (s *roomService) InitGameServer(config gameserver.ServerConfig) {
+	s.Game = new(gameserver.GameServer)
 	s.Game.InitServer(config)
 }
 
