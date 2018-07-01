@@ -37,6 +37,11 @@ func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
 			s.setFrame(id, &buf)
 		} else if buf[0] == '3' { // 退出房间
 			s.goOutRoom(id, addr)
+			// 删除对局
+			if len(s.Room[id].Players) == 0 {
+				s.Room = append(s.Room[:id], s.Room[id+1:]...)
+			}
+			break
 		}
 	}
 }
