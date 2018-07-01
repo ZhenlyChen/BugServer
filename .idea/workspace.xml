@@ -2,10 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="81594bc5-d135-4bb9-aaea-d01ef02a3a89" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gameServer/GameServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/gameServer/GameServer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gameServer/handleClient.go" beforeDir="false" afterPath="$PROJECT_DIR$/gameServer/handleClient.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gameServer/send.go" beforeDir="false" afterPath="$PROJECT_DIR$/gameServer/send.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/httpServer/HttpServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/HttpServer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/httpServer/controllers/Hall.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/httpServer/controllers/Room.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/controllers/Room.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/httpServer/models/mgo.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/models/mgo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/httpServer/services/Hall.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/httpServer/services/Room.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/services/Room.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/httpServer/services/Service.go" beforeDir="false" afterPath="$PROJECT_DIR$/httpServer/services/Service.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,35 +23,35 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="HttpServer.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/httpServer/HttpServer.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-19">
-              <caret line="51" column="21" selection-start-line="51" selection-start-column="21" selection-end-line="51" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Room.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/httpServer/services/Room.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1128">
-              <caret line="80" column="1" lean-forward="true" selection-start-line="80" selection-start-column="1" selection-end-line="80" selection-end-column="1" />
+            <state relative-caret-position="216">
+              <caret line="76" selection-start-line="76" selection-end-line="76" />
               <folding>
-                <element signature="e#18#81#0" expanded="true" />
+                <element signature="e#18#113#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Room.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/httpServer/controllers/Room.go">
+      <file leaf-file-name="game.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/httpServer/controllers/game.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="20" column="37" lean-forward="true" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
+            <state relative-caret-position="312">
+              <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
               <folding>
-                <element signature="e#21#94#0" expanded="true" />
+                <element signature="e#21#149#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HttpServer.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/httpServer/HttpServer.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="293">
+              <caret line="74" column="43" selection-start-line="74" selection-start-column="43" selection-end-line="74" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -53,7 +60,37 @@
         <entry file="file://$PROJECT_DIR$/httpServer/controllers/controller.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="264">
-              <caret line="11" column="10" lean-forward="true" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
+              <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="game.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/httpServer/services/game.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="168">
+              <caret line="7" column="41" selection-start-line="7" selection-start-column="41" selection-end-line="7" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="game.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/httpServer/models/game.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="648">
+              <caret line="27" column="29" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
+              <folding>
+                <element signature="e#16#89#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Room.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/httpServer/controllers/Room.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="96">
+              <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -61,8 +98,8 @@
       <file leaf-file-name="send.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gameServer/send.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="868">
-              <caret line="63" column="39" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="39" />
+            <state relative-caret-position="336">
+              <caret line="14" column="21" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
               <folding>
                 <element signature="e#20#62#0" expanded="true" />
               </folding>
@@ -70,20 +107,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Service.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/httpServer/services/Service.go">
+      <file leaf-file-name="handleClient.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gameServer/handleClient.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+            <state>
+              <caret column="13" selection-start-column="13" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="handleClient.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gameServer/handleClient.go">
+      <file leaf-file-name="GameServer.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gameServer/GameServer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="21" selection-start-line="21" selection-end-line="25" />
+            <state>
+              <caret column="13" selection-start-column="13" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -126,28 +163,31 @@
         <option value="$PROJECT_DIR$/httpServer/router/Register.go" />
         <option value="$PROJECT_DIR$/httpServer/controller/Hall.go" />
         <option value="$PROJECT_DIR$/httpServer/router/Hall.go" />
-        <option value="$PROJECT_DIR$/httpServer/services/Hall.go" />
         <option value="$PROJECT_DIR$/httpServer/controller/Room.go" />
         <option value="$PROJECT_DIR$/httpServer/router/Room.go" />
         <option value="$PROJECT_DIR$/httpServer/models/User.go" />
-        <option value="$PROJECT_DIR$/httpServer/models/mgo.go" />
         <option value="$PROJECT_DIR$/httpServer/services/Login.go" />
         <option value="$PROJECT_DIR$/config/config.example.yaml" />
         <option value="$PROJECT_DIR$/doc/api.md" />
         <option value="$PROJECT_DIR$/httpServer/models/Users.go" />
         <option value="$PROJECT_DIR$/main.go" />
-        <option value="$PROJECT_DIR$/httpServer/services/Service.go" />
         <option value="$PROJECT_DIR$/config/config.yaml" />
-        <option value="$PROJECT_DIR$/gameServer/send.go" />
-        <option value="$PROJECT_DIR$/gameServer/GameServer.go" />
-        <option value="$PROJECT_DIR$/gameServer/handleClient.go" />
         <option value="$PROJECT_DIR$/test/test.go" />
         <option value="$PROJECT_DIR$/httpServer/controllers/User.go" />
-        <option value="$PROJECT_DIR$/httpServer/HttpServer.go" />
         <option value="$PROJECT_DIR$/httpServer/services/User.go" />
         <option value="$PROJECT_DIR$/httpServer/controllers/controller.go" />
+        <option value="$PROJECT_DIR$/httpServer/services/Hall.go" />
+        <option value="$PROJECT_DIR$/httpServer/models/mgo.go" />
+        <option value="$PROJECT_DIR$/httpServer/services/Service.go" />
         <option value="$PROJECT_DIR$/httpServer/controllers/Room.go" />
+        <option value="$PROJECT_DIR$/httpServer/controllers/game.go" />
+        <option value="$PROJECT_DIR$/httpServer/models/game.go" />
+        <option value="$PROJECT_DIR$/httpServer/services/game.go" />
+        <option value="$PROJECT_DIR$/gameServer/handleClient.go" />
+        <option value="$PROJECT_DIR$/gameServer/GameServer.go" />
+        <option value="$PROJECT_DIR$/gameServer/send.go" />
         <option value="$PROJECT_DIR$/httpServer/services/Room.go" />
+        <option value="$PROJECT_DIR$/httpServer/HttpServer.go" />
       </list>
     </option>
   </component>
@@ -161,8 +201,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-999" />
-    <option name="y" value="61" />
+    <option name="x" value="642" />
+    <option name="y" value="-8" />
     <option name="width" value="996" />
     <option name="height" value="652" />
   </component>
@@ -174,7 +214,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -233,6 +272,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -290,17 +330,16 @@
     </recent_temporary>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1374" y="61" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1954612" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1390625" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.4112646" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3209352" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3209352" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -311,6 +350,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.4112646" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,13 +369,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../davyxu/cellnet/codec.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
@@ -455,13 +488,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/services/Hall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../XMatrixStudio/Violet.SDK.Go/api.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -490,55 +516,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/user.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1896">
-          <caret line="19" column="1" lean-forward="true" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/user.go" />
     <entry file="file://$PROJECT_DIR$/../../globalsign/mgo/session.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="124695">
           <caret line="5368" column="26" selection-start-line="5368" selection-start-column="20" selection-end-line="5368" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/models/Users.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-144">
-          <caret line="39" column="17" lean-forward="true" selection-start-line="39" selection-start-column="17" selection-end-line="39" selection-end-column="17" />
-          <folding>
-            <element signature="e#16#89#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/models/mgo.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="19" column="24" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/services/User.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="35" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gameServer/GameServer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="941">
-          <caret line="64" column="21" selection-start-line="64" selection-start-column="9" selection-end-line="64" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/controllers/Hall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
@@ -556,61 +538,116 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/HttpServer.go">
+    <entry file="file://$PROJECT_DIR$/httpServer/models/Users.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-19">
-          <caret line="51" column="21" selection-start-line="51" selection-start-column="21" selection-end-line="51" selection-end-column="21" />
+        <state relative-caret-position="72">
+          <caret line="6" selection-start-line="6" selection-end-line="20" selection-end-column="1" />
+          <folding>
+            <element signature="e#16#89#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/models/mgo.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="912">
+          <caret line="42" column="28" selection-start-line="42" selection-start-column="28" selection-end-line="42" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/services/User.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="23" column="25" lean-forward="true" selection-start-line="23" selection-start-column="25" selection-end-line="24" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/services/Service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="24" column="23" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/controllers/controller.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="264">
-          <caret line="11" column="10" lean-forward="true" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/services/Service.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+          <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/controllers/Room.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="20" column="37" lean-forward="true" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
-          <folding>
-            <element signature="e#21#94#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="96">
+          <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/httpServer/services/Room.go">
+    <entry file="file://$PROJECT_DIR$/httpServer/models/game.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1128">
-          <caret line="80" column="1" lean-forward="true" selection-start-line="80" selection-start-column="1" selection-end-line="80" selection-end-column="1" />
+        <state relative-caret-position="648">
+          <caret line="27" column="29" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
           <folding>
-            <element signature="e#18#81#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gameServer/send.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="868">
-          <caret line="63" column="39" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="39" />
-          <folding>
-            <element signature="e#20#62#0" expanded="true" />
+            <element signature="e#16#89#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gameServer/handleClient.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="21" selection-start-line="21" selection-end-line="25" />
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gameServer/GameServer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gameServer/send.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="14" column="21" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
+          <folding>
+            <element signature="e#20#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/services/Room.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="76" selection-start-line="76" selection-end-line="76" />
+          <folding>
+            <element signature="e#18#113#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/controllers/game.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+          <folding>
+            <element signature="e#21#149#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/services/game.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="7" column="41" selection-start-line="7" selection-start-column="41" selection-end-line="7" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/httpServer/HttpServer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="74" column="43" selection-start-line="74" selection-start-column="43" selection-end-line="74" selection-end-column="43" />
         </state>
       </provider>
     </entry>

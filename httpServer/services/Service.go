@@ -6,6 +6,7 @@ type Service struct {
 	Model *models.Model
 	User userService
 	Room roomService
+	Game gameService
 }
 
 func NewService(m *models.Model) *Service {
@@ -19,6 +20,10 @@ func NewService(m *models.Model) *Service {
 	service.Room = roomService{
 		Service: service,
 	}
+	service.Game = gameService{
+		Service: service,
+		Model: &m.Game,
+	}
 	return service
 }
 
@@ -28,4 +33,8 @@ func (s *Service) GetUserService() UserService {
 
 func (s *Service) GetRoomService() RoomService {
 	return &s.Room
+}
+
+func (s *Service) GetGameService() GameService {
+	return &s.Game
 }

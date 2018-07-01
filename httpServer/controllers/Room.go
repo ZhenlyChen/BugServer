@@ -8,7 +8,7 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-// UsersController 用户控制
+// RoomsController 用户控制
 type RoomsController struct {
 	Ctx     iris.Context
 	Service services.RoomService

@@ -70,6 +70,12 @@ func RunServer(c Config) {
 	rooms.Register(roomService, sessionManager.Start)
 	rooms.Handle(new(controllers.RoomsController))
 
+
+	game := mvc.New(app.Party("/game"))
+	gameServuce := Service.GetGameService()
+	game.Register(gameServuce, sessionManager.Start)
+	game.Handle(new(controllers.GameController))
+
 	app.Run(
 		// Starts the web server
 		iris.Addr(c.Server.Host+":"+c.Server.Port),

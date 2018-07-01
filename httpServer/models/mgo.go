@@ -19,6 +19,7 @@ type Model struct {
 	Config Mongo
 	DB     *mgo.Database
 	User   UserModel
+	Game   GameModel
 }
 
 // InitMongo 初始化数据库
@@ -39,6 +40,7 @@ func (m *Model) InitMongo(conf Mongo) error {
 	}
 	m.DB = session.DB(conf.Name)
 	m.User.DB = m.DB.C("users")
+	m.Game.DB = m.DB.C("game")
 	log.Printf("MongoDB Connect Success!")
 	return nil
 }

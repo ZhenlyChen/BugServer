@@ -25,6 +25,8 @@
     * [POST /room/own/\{userId\} 设置房主](#post-roomownuserid-%E8%AE%BE%E7%BD%AE%E6%88%BF%E4%B8%BB)
     * [POST /room/out/\{userId\} 踢人](#post-roomoutuserid-%E8%B8%A2%E4%BA%BA)
     * [POST /room/start 开始游戏](#post-roomstart-%E5%BC%80%E5%A7%8B%E6%B8%B8%E6%88%8F)
+  * [Game](#game)
+    * [GET /game/new 获取最新版本号](#get-gamenew-%E8%8E%B7%E5%8F%96%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E5%8F%B7)
   * [GameServer](#gameserver)
     * [请求](#%E8%AF%B7%E6%B1%82)
       * [加入对局](#%E5%8A%A0%E5%85%A5%E5%AF%B9%E5%B1%80)
@@ -578,6 +580,26 @@ status = "max_server"
 // 非合作模式下所有玩家都是同一队的
 status = "one_team"
 ```
+
+
+
+## Game
+
+### GET /game/new 获取最新版本号
+
+返回值：
+
+```go
+// Game ...
+type Game struct {
+	ID         bson.ObjectId `bson:"_id"`
+	Version    int           `bson:"version"`    // 版本
+	Title      string        `bson:"title"`      // 版本标题
+	VersionStr string        `bson:"versionStr"` // 版本号
+}
+```
+
+
 
 
 
