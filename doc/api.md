@@ -25,6 +25,14 @@
     * [POST /room/own/\{userId\} 设置房主](#post-roomownuserid-%E8%AE%BE%E7%BD%AE%E6%88%BF%E4%B8%BB)
     * [POST /room/out/\{userId\} 踢人](#post-roomoutuserid-%E8%B8%A2%E4%BA%BA)
     * [POST /room/start 开始游戏](#post-roomstart-%E5%BC%80%E5%A7%8B%E6%B8%B8%E6%88%8F)
+  * [GameServer](#gameserver)
+    * [请求](#%E8%AF%B7%E6%B1%82)
+      * [加入对局](#%E5%8A%A0%E5%85%A5%E5%AF%B9%E5%B1%80)
+      * [退出对局](#%E9%80%80%E5%87%BA%E5%AF%B9%E5%B1%80)
+      * [发送命令](#%E5%8F%91%E9%80%81%E5%91%BD%E4%BB%A4)
+      * [设置当前帧数](#%E8%AE%BE%E7%BD%AE%E5%BD%93%E5%89%8D%E5%B8%A7%E6%95%B0)
+    * [返回](#%E8%BF%94%E5%9B%9E)
+      * [当前数据](#%E5%BD%93%E5%89%8D%E6%95%B0%E6%8D%AE)
 
 ## User
 
