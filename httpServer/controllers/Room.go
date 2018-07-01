@@ -60,17 +60,17 @@ type RoomRes struct {
 	PlayerInfo []services.PlayerInfo `json:"players"`
 }
 
-// GetRoom GET /room/detail/{roomID} 获取单个房间详情
-func (c *RoomsController) GetDetailBy(id string) (res RoomRes) {
-	// 检测参数合法性
-	roomID, err := strconv.Atoi(id)
-	if err != nil {
-		res.Status = StatusBadReq
-		return
-	}
+// GetRoom GET /room/detail/ 获取自己房间详情
+func (c *RoomsController) GetDetail() (res RoomRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
 		res.Status = StatusNotLogin
+		return
+	}
+	// 是否在房间里面
+	roomID, err := c.Session.GetInt("room")
+	if err != nil {
+		res.Status = StatusNotFound
 		return
 	}
 	room, err := c.Service.GetRoom(roomID)
@@ -78,7 +78,7 @@ func (c *RoomsController) GetDetailBy(id string) (res RoomRes) {
 		res.Status = err.Error()
 		return
 	}
-	// 是否在房间内
+	// 是否已经被踢出房间
 	inRoom := false
 	userID := c.Session.GetString("id")
 	for _, player := range room.Players {
@@ -88,7 +88,7 @@ func (c *RoomsController) GetDetailBy(id string) (res RoomRes) {
 	}
 	if !inRoom {
 		// 不再房间内
-		res.Status = StatusNotAllow
+		res.Status = StatusNotFound
 		return
 	}
 	// 获取玩家详细信息

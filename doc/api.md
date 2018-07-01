@@ -3,33 +3,32 @@
 ## 目录
 
 * [API](#api)
+  * [目录](#%E7%9B%AE%E5%BD%95)
   * [User](#user)
-    * [POST /users/login](#post-userslogin)
-    * [POST /users/register](#post-usersregister)
-    * [POST /user/email](#post-useremail)
-    * [POST /user/valid](#post-uservalid)
-    * [POST /users/logout](#post-userslogout)
-    * [POST /users/Info](#post-usersinfo)
-    * [GET /user/info/\{userID\}](#get-userinfouserid)
+    * [POST /users/login 登陆](#post-userslogin-%E7%99%BB%E9%99%86)
+    * [POST /users/register 注册](#post-usersregister-%E6%B3%A8%E5%86%8C)
+    * [POST /user/email 获取邮箱验证码](#post-useremail-%E8%8E%B7%E5%8F%96%E9%82%AE%E7%AE%B1%E9%AA%8C%E8%AF%81%E7%A0%81)
+    * [POST /user/valid 验证邮箱验证码](#post-uservalid-%E9%AA%8C%E8%AF%81%E9%82%AE%E7%AE%B1%E9%AA%8C%E8%AF%81%E7%A0%81)
+    * [POST /users/logout 退出登陆](#post-userslogout-%E9%80%80%E5%87%BA%E7%99%BB%E9%99%86)
+    * [POST /users/Info 设置用户信息](#post-usersinfo-%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
+    * [GET /user/info/\{userID\} 获取用户信息](#get-userinfouserid-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
   * [Room](#room)
-    * [GET /room/list/\{page\}](#get-roomlistpage)
-    * [GET /room/detail/\{roomID\}](#get-roomdetailroomid)
-    * [POST /room/new](#post-roomnew)
-    * [POST /room/join/\{roomId\}](#post-roomjoinroomid)
-    * [POST /room/ready/\{true/false\}](#post-roomreadytruefalse)
-    * [POST /room/team/\{teamID\}](#post-roomteamteamid)
-    * [POST /room/role/\{roleName\}](#post-roomrolerolename)
-    * [POST /room/quit](#post-roomquit)
-    * [POST /room/info](#post-roominfo)
-    * [POST /room/own/\{userId\}](#post-roomownuserid)
-    * [POST /room/out/\{userId\}](#post-roomoutuserid)
-    * [POST /room/start](#post-roomstart)
+    * [GET /room/list/\{page\} 获取房间列表](#get-roomlistpage-%E8%8E%B7%E5%8F%96%E6%88%BF%E9%97%B4%E5%88%97%E8%A1%A8)
+    * [GET /room/detail 获取自己所在房间详情](#get-roomdetail-%E8%8E%B7%E5%8F%96%E8%87%AA%E5%B7%B1%E6%89%80%E5%9C%A8%E6%88%BF%E9%97%B4%E8%AF%A6%E6%83%85)
+    * [POST /room/new 新建并加入房间](#post-roomnew-%E6%96%B0%E5%BB%BA%E5%B9%B6%E5%8A%A0%E5%85%A5%E6%88%BF%E9%97%B4)
+    * [POST /room/join/\{roomId\} 加入房间](#post-roomjoinroomid-%E5%8A%A0%E5%85%A5%E6%88%BF%E9%97%B4)
+    * [POST /room/ready/\{true/false\} 设置准备状态](#post-roomreadytruefalse-%E8%AE%BE%E7%BD%AE%E5%87%86%E5%A4%87%E7%8A%B6%E6%80%81)
+    * [POST /room/team/\{teamID\} 设置队伍](#post-roomteamteamid-%E8%AE%BE%E7%BD%AE%E9%98%9F%E4%BC%8D)
+    * [POST /room/role/\{roleName\} 设置角色](#post-roomrolerolename-%E8%AE%BE%E7%BD%AE%E8%A7%92%E8%89%B2)
+    * [POST /room/quit 退出房间](#post-roomquit-%E9%80%80%E5%87%BA%E6%88%BF%E9%97%B4)
+    * [POST /room/info 设置房间信息](#post-roominfo-%E8%AE%BE%E7%BD%AE%E6%88%BF%E9%97%B4%E4%BF%A1%E6%81%AF)
+    * [POST /room/own/\{userId\} 设置房主](#post-roomownuserid-%E8%AE%BE%E7%BD%AE%E6%88%BF%E4%B8%BB)
+    * [POST /room/out/\{userId\} 踢人](#post-roomoutuserid-%E8%B8%A2%E4%BA%BA)
+    * [POST /room/start 开始游戏](#post-roomstart-%E5%BC%80%E5%A7%8B%E6%B8%B8%E6%88%8F)
 
 ## User
 
-### POST /users/login
-
-登陆
+### POST /users/login 登陆
 
 参数
 
@@ -65,9 +64,7 @@ type LoginReq struct {
 }
 ```
 
-### POST /users/register
-
-注册
+### POST /users/register 注册
 
 参数
 
@@ -118,9 +115,7 @@ type RegisterReq struct {
 }
 ```
 
-### POST /user/email
-
-获取验证码
+### POST /user/email 获取邮箱验证码
 
 无参数
 
@@ -137,9 +132,7 @@ type RegisterReq struct {
 }
 ```
 
-### POST /user/valid
-
-验证邮箱
+### POST /user/valid 验证邮箱验证码
 
 参数
 
@@ -162,9 +155,7 @@ type ValidReq struct {
 }
 ```
 
-### POST /users/logout
-
-退出登陆
+### POST /users/logout 退出登陆
 
 无参数
 
@@ -177,9 +168,7 @@ type ValidReq struct {
 }
 ```
 
-### POST /users/Info
-
-设置用户信息
+### POST /users/Info 设置用户信息
 
 参数
 
@@ -205,9 +194,9 @@ type InfoReq struct {
 }
 ```
 
-### GET /user/info/{userID} 
+### GET /user/info/{userID} 获取用户信息
 
-获取用户信息，userID为空时候获取自身信息
+userID为空时候获取自身信息
 
 返回
 
@@ -235,9 +224,9 @@ status = "error"
 
 以下API均需要登陆状态
 
-### GET /room/list/{page}
+### GET /room/list/{page} 获取房间列表
 
-获取房间列表（每页10个）page:1~10
+（每页10个）page:1~10
 
 需要登陆状态
 
@@ -272,11 +261,7 @@ status = "bad_req"
 
 
 
-### GET /room/detail/{roomID} 
-
-获取单个房间详情
-
-需要已经加入了房间中
+### GET /room/detail 获取自己所在房间详情
 
 返回：
 
@@ -324,17 +309,13 @@ status = "success"
 status = "not_login"
 // 非法请求
 status = "bad_req"
-// 房间不存在
+// 玩家不在房间内/或者房间不存在
 status = "not_found"
-// 玩家不在房间内
-status = "not_allow"
 ```
 
 
 
-###  POST /room/new 
-
-新建并加入房间
+###  POST /room/new 新建并加入房间
 
 参数：
 
@@ -365,9 +346,7 @@ status = "bad_req"
 
 
 
-### POST /room/join/{roomId}
-
-加入房间
+### POST /room/join/{roomId} 加入房间
 
 参数：
 
@@ -400,9 +379,7 @@ status = "max_player"
 
 
 
-### POST /room/ready/{true/false} 
-
-设置准备状态
+### POST /room/ready/{true/false} 设置准备状态
 
 返回值
 
@@ -423,9 +400,7 @@ status = "not_found"
 
 
 
-### POST /room/team/{teamID} 
-
-设置队伍
+### POST /room/team/{teamID} 设置队伍
 
 返回值：
 
@@ -448,9 +423,7 @@ status = "not_allow"
 
 
 
-### POST /room/role/{roleName} 
-
-设置角色
+### POST /room/role/{roleName} 设置角色
 
 返回值：
 
@@ -471,9 +444,7 @@ status = "not_found"
 
 
 
-### POST /room/quit 
-
-退出房间
+### POST /room/quit 退出房间
 
 返回值：
 
@@ -492,9 +463,11 @@ status = "not_found"
 
 
 
-### POST /room/info 
+---
 
-设置房间信息
+以下为房主专用API
+
+### POST /room/info 设置房间信息
 
 参数：
 
@@ -527,9 +500,7 @@ status = "not_allow"
 
 
 
-### POST /room/own/{userId} 
-
-设置房主
+### POST /room/own/{userId} 设置房主
 
 返回值：
 
@@ -552,9 +523,7 @@ status = "not_allow"
 
 
 
-### POST /room/out/{userId} 
-
-踢人
+### POST /room/out/{userId} 踢人
 
 返回值：
 
@@ -577,9 +546,7 @@ status = "not_allow"
 
 
 
-### POST /room/start 
-
-开始游戏
+### POST /room/start 开始游戏
 
 返回值：
 

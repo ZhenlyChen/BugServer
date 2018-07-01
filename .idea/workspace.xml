@@ -33,8 +33,8 @@
       <file leaf-file-name="Room.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/httpServer/services/Room.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="268" column="9" lean-forward="true" selection-start-line="268" selection-start-column="9" selection-end-line="268" selection-end-column="9" />
+            <state relative-caret-position="561">
+              <caret line="325" column="25" lean-forward="true" selection-start-line="325" selection-start-column="25" selection-end-line="325" selection-end-column="25" />
               <folding>
                 <element signature="e#18#81#0" expanded="true" />
               </folding>
@@ -144,7 +144,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="557" />
     <option name="y" value="-8" />
     <option name="width" value="996" />
@@ -590,8 +590,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/httpServer/services/Room.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="268" column="9" lean-forward="true" selection-start-line="268" selection-start-column="9" selection-end-line="268" selection-end-column="9" />
+        <state relative-caret-position="561">
+          <caret line="325" column="25" lean-forward="true" selection-start-line="325" selection-start-column="25" selection-end-line="325" selection-end-column="25" />
           <folding>
             <element signature="e#18#81#0" expanded="true" />
           </folding>
