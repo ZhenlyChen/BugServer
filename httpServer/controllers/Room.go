@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"strconv"
+
+	"github.com/ZhenlyChen/BugServer/httpServer/services"
+	"github.com/globalsign/mgo/bson"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/sessions"
-	"github.com/ZhenlyChen/BugServer/httpServer/services"
-	"strconv"
-	"github.com/globalsign/mgo/bson"
 )
 
 // RoomsController 用户控制

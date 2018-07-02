@@ -1,17 +1,15 @@
 package controllers
 
-
 const (
-	StatusSuccess = "success"
-	StatusBadReq = "bad_req"
-	StatusNull = "null"
+	StatusSuccess  = "success"
+	StatusBadReq   = "bad_req"
+	StatusNull     = "null"
 	StatusNotLogin = "not_login"
-	StatusError = "error"
+	StatusError    = "error"
 	StatusNotValid = "not_valid"
 	StatusNotAllow = "not_allow"
 	StatusNotFound = "not_found"
 )
-
 
 // CommonRes 一般返回值
 type CommonRes struct {

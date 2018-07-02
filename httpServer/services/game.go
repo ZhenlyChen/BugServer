@@ -9,7 +9,7 @@ type GameService interface {
 }
 
 type gameService struct {
-	Model    *models.GameModel
+	Model   *models.GameModel
 	Service *Service
 }
 

@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/kataras/iris/core/errors"
 	"github.com/ZhenlyChen/BugServer/gameServer"
 )
 
@@ -31,6 +30,7 @@ type roomService struct {
 	Rooms   []GameRoom
 }
 
+// GameMode 游戏模式
 const (
 	GameModePersonal  = "personal" // 个人
 	GameModeTogether  = "together" // 合作
@@ -40,16 +40,6 @@ const (
 
 	MaxRoom   = 100
 	MaxPlayer = 20
-)
-
-var (
-	ErrNotFound  = errors.New("not_found")
-	ErrNotAllow  = errors.New("not_allow")
-	ErrNotReady  = errors.New("not_ready")
-	ErrMaxServer = errors.New("max_server")
-	ErrMaxPlayer = errors.New("max_player")
-	ErrPassword  = errors.New("err_password")
-	ErrOneTeam   = errors.New("one_team")
 )
 
 // GameRoom 房间数据

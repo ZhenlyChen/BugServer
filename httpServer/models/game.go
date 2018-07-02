@@ -18,11 +18,13 @@ type Game struct {
 	VersionStr string        `bson:"versionStr"` // 版本号
 }
 
+// GetNewestVersion 获取最新版本信息
 func (m *GameModel) GetNewestVersion() (res Game) {
 	m.DB.Find(nil).Sort("version").One(&res)
 	return
 }
 
+// SetNewVersion 设置最新版本
 func (m *GameModel) SetNewVersion(data Game) error {
 	data.ID = bson.NewObjectId()
 	return m.DB.Insert(&data)

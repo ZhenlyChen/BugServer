@@ -44,7 +44,7 @@ func (m *UserModel) AddUser(vID, name, email string) (bson.ObjectId, error) {
 		Email:    email,
 		Info: UserInfo{
 			NikeName: "user_" + newUser.Hex(),
-			Avatar:  "default",
+			Avatar:   "default",
 		},
 	})
 	if err != nil {
@@ -75,4 +75,3 @@ func (m *UserModel) GetUserByVID(id string) (user Users, err error) {
 func (m *UserModel) SetUserInfo(id string, info UserInfo) error {
 	return m.DB.UpdateId(bson.ObjectIdHex(id), bson.M{"$set": bson.M{"info": info}})
 }
-

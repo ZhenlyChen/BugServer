@@ -1,13 +1,14 @@
 package controllers
 
 import (
+	"html/template"
+	"regexp"
+
+	"github.com/ZhenlyChen/BugServer/httpServer/models"
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
+	"github.com/globalsign/mgo/bson"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/sessions"
-	"github.com/globalsign/mgo/bson"
-	"regexp"
-	"html/template"
-	"github.com/ZhenlyChen/BugServer/httpServer/models"
 )
 
 // UsersController 用户控制
@@ -16,7 +17,6 @@ type UsersController struct {
 	Service services.UserService
 	Session *sessions.Session
 }
-
 
 // LoginReq OST /user/login 登陆请求
 type LoginReq struct {

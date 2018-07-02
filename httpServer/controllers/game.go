@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"github.com/kataras/iris"
-	"github.com/ZhenlyChen/BugServer/httpServer/services"
-	"github.com/kataras/iris/sessions"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
+	"github.com/ZhenlyChen/BugServer/httpServer/services"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/sessions"
 )
 
 // GameController 用户控制
@@ -15,8 +15,8 @@ type GameController struct {
 }
 
 type GameRes struct {
-	Status string `json:"status"`
-	Data models.Game `json:"data"`
+	Status string      `json:"status"`
+	Data   models.Game `json:"data"`
 }
 
 // GetNew GET /game/new 获取最新版本号

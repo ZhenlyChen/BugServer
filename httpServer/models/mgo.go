@@ -15,6 +15,7 @@ type Mongo struct {
 	Name     string `yaml:"Name"`
 }
 
+// Model ...
 type Model struct {
 	Config Mongo
 	DB     *mgo.Database
@@ -45,6 +46,7 @@ func (m *Model) InitMongo(conf Mongo) error {
 	return nil
 }
 
+// NewModel ...
 func NewModel(c Mongo) (*Model, error) {
 	model := new(Model)
 	err := model.InitMongo(c)

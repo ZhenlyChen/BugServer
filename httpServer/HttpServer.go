@@ -4,15 +4,15 @@ import (
 	"time"
 
 	"github.com/XMatrixStudio/Violet.SDK.Go"
+	"github.com/ZhenlyChen/BugServer/gameServer"
 	"github.com/ZhenlyChen/BugServer/httpServer/controllers"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
+	"github.com/betacraft/yaag/irisyaag"
+	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
-	"github.com/ZhenlyChen/BugServer/gameServer"
-	"github.com/betacraft/yaag/yaag"
-	"github.com/betacraft/yaag/irisyaag"
 )
 
 type ServerConfig struct {
@@ -44,7 +44,7 @@ func RunServer(c Config) {
 	// 文档生成器
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. On: true,
 		DocTitle: "Iris",
-		DocPath: "apidoc.html",
+		DocPath:  "apidoc.html",
 		BaseUrls: map[string]string{"Production": "", "Staging": ""},
 	})
 	app.Use(irisyaag.New())
@@ -69,7 +69,6 @@ func RunServer(c Config) {
 	roomService.InitGameServer(c.Server.Game)
 	rooms.Register(roomService, sessionManager.Start)
 	rooms.Handle(new(controllers.RoomsController))
-
 
 	game := mvc.New(app.Party("/game"))
 	gameServuce := Service.GetGameService()
