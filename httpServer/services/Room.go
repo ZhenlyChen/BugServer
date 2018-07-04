@@ -1,13 +1,16 @@
 package services
 
 import (
+	"time"
+
 	"github.com/ZhenlyChen/BugServer/gameServer"
 )
 
 // RoomService ...
 type RoomService interface {
 	InitGameServer(config gameServer.ServerConfig)
-
+	CheckHeart()
+	Heart(userID string, roomID int) bool
 	GetRoom(roomID int) (room *GameRoom, err error)
 	JoinRoom(roomID int, userID, password string) error
 	SetReady(roomID int, userID string, isReady bool) error
@@ -62,7 +65,37 @@ type Player struct {
 	GameID  int    `json:"gameId"`  // 游戏内ID
 	RoleID  string `json:"roleId"`  // 角色ID
 	IsReady bool   `json:"isReady"` // 是否准备
+	Heart   int    `json:"heart"`   // 心跳💗
 	Team    int    `json:"team"`    // "1-4" - 队伍一~四
+}
+
+func (s *roomService) CheckHeart() {
+	for {
+		time.Sleep(time.Second)
+		for i := range s.Rooms {
+			for j := range s.Rooms[i].Players {
+				if s.Rooms[i].Players[j].Heart > 10 {
+					s.QuitRoom(s.Rooms[i].ID, s.Rooms[i].Players[j].UserID)
+				} else {
+					s.Rooms[i].Players[j].Heart++
+				}
+			}
+		}
+	}
+}
+
+func (s *roomService) Heart(userID string, roomID int) bool {
+	room, err := s.GetRoom(roomID)
+	if err != nil {
+		return false
+	}
+	for i := range room.Players {
+		if room.Players[i].UserID == userID {
+			room.Players[i].Heart = 0
+			return true
+		}
+	}
+	return false
 }
 
 func (s *roomService) InitGameServer(config gameServer.ServerConfig) {

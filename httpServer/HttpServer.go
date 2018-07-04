@@ -67,6 +67,7 @@ func RunServer(c Config) {
 	rooms := mvc.New(app.Party("/room"))
 	roomService := Service.GetRoomService()
 	roomService.InitGameServer(c.Server.Game)
+	go roomService.CheckHeart()
 	rooms.Register(roomService, sessionManager.Start)
 	rooms.Handle(new(controllers.RoomsController))
 

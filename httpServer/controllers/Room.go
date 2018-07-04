@@ -23,8 +23,27 @@ type RoomsRes struct {
 	Rooms  []services.GameRoom `json:"rooms"`
 }
 
+// GetHeart GET /room/heart 发送心跳包
+func (c *RoomsController) GetHeart() string {
+	if c.Session.Get("id") == nil || c.Session.Get("room") == nil {
+		return "false"
+	}
+	roomID, err := c.Session.GetInt("room")
+	if err != nil {
+		return "false"
+	}
+	if c.Service.Heart(c.Session.GetString("id"), roomID) {
+		return "true"
+	}
+	return "false"
+}
+
 // GetListBy GET /room/list/{page}?size=n 获取房间列表（每页n(1-20)个）
 func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
+	if c.Session.Get("id") == nil {
+		res.Status = StatusNotLogin
+		return
+	}
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		res.Status = StatusBadReq
@@ -56,7 +75,7 @@ func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 		res.Status = StatusNull
 		return
 	} else if res.Count < page*pageSize {
-		endIndex = res.Count - 1
+		endIndex = res.Count
 	}
 
 	res.Status = StatusSuccess

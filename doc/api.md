@@ -13,6 +13,7 @@
     * [POST /users/Info 设置用户信息](#post-usersinfo-%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
     * [GET /user/info/\{userID\} 获取用户信息](#get-userinfouserid-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
   * [Room](#room)
+    * [GET /room/heart 房间心跳包](#get-roomheart-%E6%88%BF%E9%97%B4%E5%BF%83%E8%B7%B3%E5%8C%85)
     * [GET /room/list/\{page\} 获取房间列表](#get-roomlistpage-%E8%8E%B7%E5%8F%96%E6%88%BF%E9%97%B4%E5%88%97%E8%A1%A8)
     * [GET /room/detail 获取自己所在房间详情](#get-roomdetail-%E8%8E%B7%E5%8F%96%E8%87%AA%E5%B7%B1%E6%89%80%E5%9C%A8%E6%88%BF%E9%97%B4%E8%AF%A6%E6%83%85)
     * [POST /room/new 新建并加入房间](#post-roomnew-%E6%96%B0%E5%BB%BA%E5%B9%B6%E5%8A%A0%E5%85%A5%E6%88%BF%E9%97%B4)
@@ -35,6 +36,8 @@
       * [设置当前帧数](#%E8%AE%BE%E7%BD%AE%E5%BD%93%E5%89%8D%E5%B8%A7%E6%95%B0)
     * [返回](#%E8%BF%94%E5%9B%9E)
       * [当前数据](#%E5%BD%93%E5%89%8D%E6%95%B0%E6%8D%AE)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 ## User
 
@@ -234,6 +237,23 @@ status = "error"
 
 以下API均需要登陆状态
 
+### GET /room/heart 房间心跳包
+
+保证人物在房间中
+
+无参数
+
+返回：
+
+```go
+// 成功
+true
+// 未登陆或不再房间中
+false
+```
+
+
+
 ### GET /room/list/{page} 获取房间列表
 
 参数：size
@@ -339,6 +359,11 @@ type reqNewRoom struct {
 	GameMode  string `json:"gameMode"`
 	MaxPlayer int    `josn:"maxPlayer"`
 }
+GameModePersonal  = "personal" // 个人
+GameModeTogether  = "together" // 合作
+GameModeTeamTwo   = "team2"    // 2人团队
+GameModeTeamThree = "team3"    // 3人团队
+GameModeTeamFour  = "team4"    // 4人团队
 ```
 
 返回值：
