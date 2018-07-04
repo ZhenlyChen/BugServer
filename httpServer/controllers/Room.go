@@ -23,18 +23,26 @@ type RoomsRes struct {
 	Rooms  []services.GameRoom `json:"rooms"`
 }
 
-// GetListBy GET /room/list/{page} 获取房间列表（每页10个）page:1~10
+// GetListBy GET /room/list/{page}?size=n 获取房间列表（每页n(1-20)个）
 func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
-		res.Status = err.Error()
-		return
-	}
-	if page < 1 || page > 10 {
 		res.Status = StatusBadReq
 		return
 	}
-
+	pageSize, err := strconv.Atoi(c.Ctx.FormValue("size"))
+	if err != nil {
+		res.Status = StatusBadReq
+		return
+	}
+	if pageSize < 1 || pageSize > 20 {
+		res.Status = StatusBadReq
+		return
+	}
+	if page < 1 || page > pageSize {
+		res.Status = StatusBadReq
+		return
+	}
 	rooms := c.Service.GetRooms()
 	res.Count = len(rooms)
 	// 删除密码
@@ -43,16 +51,16 @@ func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 			room.Password = "password"
 		}
 	}
-	endIndex := page * 10
-	if res.Count < (page-1)*10 {
+	endIndex := page * pageSize
+	if res.Count < (page-1)*pageSize {
 		res.Status = StatusNull
 		return
-	} else if res.Count < page*10 {
+	} else if res.Count < page*pageSize {
 		endIndex = res.Count - 1
 	}
 
 	res.Status = StatusSuccess
-	res.Rooms = rooms[(page-1)*10 : endIndex]
+	res.Rooms = rooms[(page-1)*pageSize : endIndex]
 	return
 }
 

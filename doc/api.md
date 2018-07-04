@@ -236,7 +236,9 @@ status = "error"
 
 ### GET /room/list/{page} 获取房间列表
 
-（每页10个）page:1~10
+参数：size
+example： /room/list/{page}?size=n
+（每页n(1-20)个）
 
 需要登陆状态
 
