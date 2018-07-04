@@ -125,7 +125,7 @@ func (c *UsersController) PostValid() (res CommonRes) {
 	return
 }
 
-// POST /user/logout 退出登陆
+// PostLogout POST /user/logout 退出登陆
 func (c *UsersController) PostLogout() (res CommonRes) {
 	c.Session.Clear()
 	res.Status = StatusSuccess

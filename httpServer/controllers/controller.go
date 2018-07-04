@@ -1,5 +1,6 @@
 package controllers
 
+// Status 返回状态
 const (
 	StatusSuccess  = "success"
 	StatusBadReq   = "bad_req"

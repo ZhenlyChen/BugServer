@@ -16,13 +16,14 @@ type RoomsController struct {
 	Session *sessions.Session
 }
 
+// RoomsRes 房间列表
 type RoomsRes struct {
 	Status string              `json:"status"`
 	Count  int                 `json:"count"`
 	Rooms  []services.GameRoom `json:"rooms"`
 }
 
-// GetRooms GET /room/list/{page} 获取房间列表（每页10个）page:1~10
+// GetListBy GET /room/list/{page} 获取房间列表（每页10个）page:1~10
 func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
@@ -55,13 +56,14 @@ func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 	return
 }
 
+// RoomRes ...
 type RoomRes struct {
 	Status     string                `json:"status"`
 	Room       services.GameRoom     `json:"room"`
 	PlayerInfo []services.PlayerInfo `json:"players"`
 }
 
-// GetRoom GET /room/detail/ 获取自己房间详情
+// GetDetail GET /room/detail/ 获取自己房间详情
 func (c *RoomsController) GetDetail() (res RoomRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
@@ -115,7 +117,7 @@ type reqNewRoom struct {
 	MaxPlayer int    `josn:"maxPlayer"`
 }
 
-// PostRoom POST /room/new 新建并加入房间
+// PostNew POST /room/new 新建并加入房间
 func (c *RoomsController) PostNew() (res CommonRes) {
 	if c.Session.Get("id") == nil {
 		res.Status = StatusNotLogin
@@ -144,7 +146,7 @@ type reqJoinRoom struct {
 	Password string `json:"password"`
 }
 
-// PostJoin POST /room/join/{roomId} 加入房间
+// PostJoinBy POST /room/join/{roomId} 加入房间
 func (c *RoomsController) PostJoinBy(id string) (res CommonRes) {
 	// 检测参数合法性
 	roomID, err := strconv.Atoi(id)
@@ -171,7 +173,7 @@ func (c *RoomsController) PostJoinBy(id string) (res CommonRes) {
 	return
 }
 
-// PostReady POST /room/ready/{true/false} 设置准备状态
+// PostReadyBy POST /room/ready/{true/false} 设置准备状态
 func (c *RoomsController) PostReadyBy(isReady string) (res CommonRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
@@ -200,7 +202,7 @@ func (c *RoomsController) PostReadyBy(isReady string) (res CommonRes) {
 	return
 }
 
-// PostTeam POST /room/team/{teamID} 设置队伍
+// PostTeamBy POST /room/team/{teamID} 设置队伍
 func (c *RoomsController) PostTeamBy(teamStr string) (res CommonRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
@@ -226,7 +228,7 @@ func (c *RoomsController) PostTeamBy(teamStr string) (res CommonRes) {
 	return
 }
 
-// PostRole POST /room/role/{roleName} 设置角色
+// PostRoleBy POST /room/role/{roleName} 设置角色
 func (c *RoomsController) PostRoleBy(role string) (res CommonRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
@@ -305,7 +307,7 @@ func (c *RoomsController) PostInfo() (res CommonRes) {
 	return
 }
 
-// PostRole POST /room/own/{userId} 设置房主
+// PostOwnBy POST /room/own/{userId} 设置房主
 func (c *RoomsController) PostOwnBy(id string) (res CommonRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
@@ -330,7 +332,7 @@ func (c *RoomsController) PostOwnBy(id string) (res CommonRes) {
 	return
 }
 
-// PostRole POST /room/out/{userId} 踢人
+// PostOutBy POST /room/out/{userId} 踢人
 func (c *RoomsController) PostOutBy(id string) (res CommonRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {

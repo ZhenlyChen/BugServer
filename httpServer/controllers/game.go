@@ -14,6 +14,7 @@ type GameController struct {
 	Session *sessions.Session
 }
 
+// GameRes 游戏版本内容
 type GameRes struct {
 	Status string      `json:"status"`
 	Data   models.Game `json:"data"`
