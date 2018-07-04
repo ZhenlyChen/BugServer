@@ -12,10 +12,10 @@ type GameModel struct {
 
 // Game ...
 type Game struct {
-	ID         bson.ObjectId `bson:"_id"`
-	Version    int           `bson:"version"`    // 版本
-	Title      string        `bson:"title"`      // 版本标题
-	VersionStr string        `bson:"versionStr"` // 版本号
+	ID         bson.ObjectId `bson:"_id" json:"id"`
+	Version    int           `bson:"version" json:"version"`    // 版本
+	Title      string        `bson:"title" json:"title"`      // 版本标题
+	VersionStr string        `bson:"versionStr" json:"versionStr"` // 版本号
 }
 
 // GetNewestVersion 获取最新版本信息

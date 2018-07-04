@@ -27,7 +27,11 @@ type LoginReq struct {
 // PostLogin POST /user/login 登陆
 func (c *UsersController) PostLogin() (result CommonRes) {
 	req := LoginReq{}
-	c.Ctx.ReadForm(&req)
+	c.Ctx.ReadJSON(&req)
+	if req.Name == "" || req.Password == "" {
+		result.Status = StatusBadReq
+		return
+	}
 	valid, data, err := c.Service.Login(req.Name, req.Password)
 	if err != nil { // 与Violet连接发生错误
 		result.Status = StatusError
@@ -63,7 +67,7 @@ type RegisterReq struct {
 // PostRegister POST /user/register 注册
 func (c *UsersController) PostRegister() (res CommonRes) {
 	req := RegisterReq{}
-	if err := c.Ctx.ReadForm(&req); err != nil {
+	if err := c.Ctx.ReadJSON(&req); err != nil {
 		res.Status = StatusBadReq
 	}
 	if err := c.Service.Register(req.Name, req.Email, req.Password); err != nil {
@@ -105,7 +109,7 @@ func (c *UsersController) PostValid() (res CommonRes) {
 		return
 	}
 	req := ValidReq{}
-	if err := c.Ctx.ReadForm(&req); err != nil {
+	if err := c.Ctx.ReadJSON(&req); err != nil {
 		res.Status = StatusBadReq
 	}
 	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
@@ -143,7 +147,7 @@ func (c *UsersController) PostInfo() (res CommonRes) {
 	}
 	// 检测姓名合法性
 	req := InfoReq{}
-	if err := c.Ctx.ReadForm(&req); err != nil || req.Name == "" || len(req.Name) > 20 {
+	if err := c.Ctx.ReadJSON(&req); err != nil || req.Name == "" || len(req.Name) > 20 {
 		res.Status = StatusBadReq
 		return
 	}
