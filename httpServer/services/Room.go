@@ -74,7 +74,7 @@ func (s *roomService) CheckHeart() {
 		time.Sleep(time.Second)
 		for i := range s.Rooms {
 			for j := range s.Rooms[i].Players {
-				if s.Rooms[i].Players[j].Heart > 10 {
+				if s.Rooms[i].Players[j].Heart > 3 {
 					s.QuitRoom(s.Rooms[i].ID, s.Rooms[i].Players[j].UserID)
 				} else {
 					s.Rooms[i].Players[j].Heart++
