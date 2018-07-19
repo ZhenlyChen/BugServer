@@ -283,10 +283,11 @@ type GameRoom struct {
 	OwnID     string   `json:"ownId"`     // 房主ID
 	Port      int      `json:"port"`      // 房间服务器端口
 	Title     string   `json:"title"`     // 标题
+	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
 	GameMap   string   `json:"gameMap"`   // 游戏地图
 	MaxPlayer int      `json:"maxPlayer"` // 最大人数
 	Mode      string   `json:"mode"`      // 游戏模式
-	Password  string   `json:"password"`  // 房间密码（如果有密码则为"password",没有就为""）
+	Password  string   `json:"password"`  // 房间密码
 	Playing   bool     `json:"playing"`   // 是否正在玩
 	Players   []Player `json:"players"`   // 玩家数据
 }
