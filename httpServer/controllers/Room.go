@@ -141,7 +141,8 @@ type reqNewRoom struct {
 	Password  string `json:"password"`
 	GameMap   string `json:"gameMap"`
 	GameMode  string `json:"gameMode"`
-	MaxPlayer int    `josn:"maxPlayer"`
+	MaxPlayer int    `json:"maxPlayer"`
+	IsRandom  bool   `json:"isRandom"`
 }
 
 // PostNew POST /room/new 新建并加入房间
@@ -158,7 +159,7 @@ func (c *RoomsController) PostNew() (res CommonRes) {
 		res.Status = StatusBadReq
 		return
 	}
-	roomID, err := c.Service.AddRoom(c.Session.GetString("id"), req.Title, req.GameMode, req.GameMap, req.Password, req.MaxPlayer)
+	roomID, err := c.Service.AddRoom(c.Session.GetString("id"), req.Title, req.GameMode, req.GameMap, req.Password, req.MaxPlayer, req.IsRandom)
 	if err != nil {
 		res.Status = err.Error()
 		return
@@ -302,12 +303,6 @@ func (c *RoomsController) PostQuit() (res CommonRes) {
 	return
 }
 
-type roomInfoReq struct {
-	MaxPlayer int    `json:"maxPlayer"`
-	GameMap   string `json:"gameMap"`
-	GameMode  string `json:"gameMode"`
-}
-
 // PostInfo POST /room/info 设置房间信息
 func (c *RoomsController) PostInfo() (res CommonRes) {
 	// 是否登陆
@@ -321,12 +316,14 @@ func (c *RoomsController) PostInfo() (res CommonRes) {
 		res.Status = StatusNotFound
 		return
 	}
-	req := roomInfoReq{}
-	if err := c.Ctx.ReadJSON(&req); err != nil {
+	req := reqNewRoom{}
+	if err := c.Ctx.ReadJSON(&req); err != nil ||
+		req.GameMap == "" || req.Title == "" || req.MaxPlayer < 0 ||
+		req.MaxPlayer > services.MaxPlayer {
 		res.Status = StatusBadReq
 		return
 	}
-	if err := c.Service.SetRoomInfo(roomID, req.MaxPlayer, c.Session.GetString("id"), req.GameMap, req.GameMode); err != nil {
+	if err := c.Service.SetRoomInfo(roomID, req.MaxPlayer, c.Session.GetString("id"), req.GameMap, req.Title, req.Password, req.IsRandom); err != nil {
 		res.Status = err.Error()
 		return
 	}

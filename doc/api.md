@@ -205,6 +205,11 @@ type InfoReq struct {
     "status": "bad_req",
     "msg": ""
 }
+// 名字重复
+{
+    "status": "not_allow",
+    "msg": ""
+}
 ```
 
 ### GET /user/info/{userID} 获取用户信息
@@ -311,10 +316,11 @@ type GameRoom struct {
 	OwnID     string   `json:"ownId"`     // 房主ID
 	Port      int      `json:"port"`      // 房间服务器端口
 	Title     string   `json:"title"`     // 标题
+	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
 	GameMap   string   `json:"gameMap"`   // 游戏地图
 	MaxPlayer int      `json:"maxPlayer"` // 最大人数
 	Mode      string   `json:"mode"`      // 游戏模式
-	Password  string   `json:"password"`  // 房间密码（如果有密码则为"password",没有就为""）
+	Password  string   `json:"password"`  // 房间密码
 	Playing   bool     `json:"playing"`   // 是否正在玩
 	Players   []Player `json:"players"`   // 玩家数据
 }
@@ -511,10 +517,12 @@ status = "not_found"
 参数：
 
 ```go
-type roomInfoReq struct {
-	MaxPlayer int    `json:"maxPlayer"`// 参数为0则不更改
-	GameMap   string `json:"gameMap"` // 参数为“”则不更改
-	GameMode  string `json:"gameMode"`// 参数为“”则不更改
+type reqNewRoom struct {
+	Title     string `json:"title"`
+	Password  string `json:"password"` // （没有为""）
+	GameMap   string `json:"gameMap"`
+	// GameMode  string `json:"gameMode"` 模式不能改变
+	MaxPlayer int    `josn:"maxPlayer"`
 }
 ```
 

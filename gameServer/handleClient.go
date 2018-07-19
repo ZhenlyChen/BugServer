@@ -70,7 +70,7 @@ func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 		}
 		fmt.Println("Come in ", addr.String())
 		fmt.Println(len(s.Room[id].Players), '/', s.Room[id].People)
-		s.Room[id].conn.WriteToUDP([]byte("ok"), addr)
+		s.Room[id].conn.WriteToUDP([]byte("join"), addr)
 	}
 }
 
@@ -106,7 +106,7 @@ func (s *GameServer) goOutRoom(id int, addr *net.UDPAddr) {
 		if s.Room[id].Players[i].IP.String() == addr.String() {
 			s.Room[id].Players = append(s.Room[id].Players[:i], s.Room[id].Players[i+1:]...)
 			fmt.Println("Go out: ", addr.String())
-			s.Room[id].conn.WriteToUDP([]byte("ok"), addr)
+			s.Room[id].conn.WriteToUDP([]byte("out"), addr)
 			break
 		}
 	}

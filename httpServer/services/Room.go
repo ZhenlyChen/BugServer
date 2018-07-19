@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/ZhenlyChen/BugServer/gameServer"
+	"math/rand"
+	"strconv"
 )
 
 // RoomService ...
@@ -22,8 +24,8 @@ type RoomService interface {
 	// 房主
 	StartGame(roomID int, ownID string) error
 	SetRoomOwn(roomID int, ownID, newOwnID string) error
-	AddRoom(ownID, title, mode, gameMap, password string, maxPlayer int) (roomID int, err error)
-	SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, gameMode string) error
+	AddRoom(ownID, title, mode, gameMap, password string, maxPlayer int, isRandom bool) (roomID int, err error)
+	SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, title, password string, isRandom bool) error
 	GetOutRoom(roomID int, ownID, userID string) error
 }
 
@@ -51,6 +53,7 @@ type GameRoom struct {
 	OwnID     string   `json:"ownId"`     // 房主ID
 	Port      int      `json:"port"`      // 房间服务器端口
 	Title     string   `json:"title"`     // 标题
+	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
 	GameMap   string   `json:"gameMap"`   // 游戏地图
 	MaxPlayer int      `json:"maxPlayer"` // 最大人数
 	Mode      string   `json:"mode"`      // 游戏模式
@@ -214,7 +217,7 @@ func (s *roomService) GetPlayers(roomID int) (info []PlayerInfo, err error) {
 }
 
 // AddRoom 新建一个房间
-func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxPlayer int) (roomID int, err error) {
+func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxPlayer int, isRandom bool) (roomID int, err error) {
 	if maxPlayer > 20 {
 		return 0, ErrMaxPlayer
 	}
@@ -229,6 +232,7 @@ func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxP
 		Mode:      mode,
 		OwnID:     ownID,
 		Playing:   false,
+		IsRandom:  isRandom,
 		Players: []Player{{
 			UserID:  ownID,
 			GameID:  0,
@@ -289,6 +293,14 @@ func (s *roomService) StartGame(roomID int, ownID string) error {
 		}
 		if isOne {
 			return ErrOneTeam
+		}
+	}
+
+	// 随机分配角色
+	if room.IsRandom {
+		gameInfo := s.Service.Game.GetNewestVersion()
+		for i := range room.Players {
+			room.Players[i].RoleID = strconv.Itoa(rand.Intn(gameInfo.MaxRole))
 		}
 	}
 
@@ -405,7 +417,7 @@ func (s *roomService) SetRoomOwn(roomID int, ownID, newOwnID string) error {
 }
 
 // SetRoomInfo 设置房间信息
-func (s *roomService) SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, gameMode string) error {
+func (s *roomService) SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, title, password string, isRandom bool) error {
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -413,15 +425,14 @@ func (s *roomService) SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, gameMod
 	if room.OwnID != ownID {
 		return ErrNotAllow
 	}
-	if gameMap != "" {
-		room.GameMap = gameMap
+	if len(room.Players) > maxPlayer {
+		return ErrNotAllow
 	}
-	if gameMode != "" {
-		room.GameMap = gameMode
-	}
-	if maxPlayer != 0 {
-		room.MaxPlayer = maxPlayer
-	}
+	room.GameMap = gameMap
+	room.MaxPlayer = maxPlayer
+	room.IsRandom = isRandom
+	room.Password = password
+	room.Title = title
 	return nil
 }
 

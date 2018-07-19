@@ -96,6 +96,18 @@ func (s *userService) GetUserInfo(id string) (user models.Users, err error) {
 }
 
 func (s *userService) SetUserInfo(id string, info models.UserInfo) error {
+	if info.NikeName == "new_user" {
+		return ErrNotAllow
+	}
+	users, err := s.Model.GetUsers()
+	if err != nil {
+		return ErrNotAllow
+	}
+	for _, user := range users {
+		if user.Info.NikeName == info.NikeName {
+			return ErrNotAllow
+		}
+	}
 	return s.Model.SetUserInfo(id, info)
 }
 

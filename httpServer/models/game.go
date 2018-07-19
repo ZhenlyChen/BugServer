@@ -16,6 +16,7 @@ type Game struct {
 	Version    int           `bson:"version" json:"version"`       // 版本
 	Title      string        `bson:"title" json:"title"`           // 版本标题
 	VersionStr string        `bson:"versionStr" json:"versionStr"` // 版本号
+	MaxRole    int           `bson:"maxRole" json:"maxRole"`       // 最大角色数
 }
 
 // GetNewestVersion 获取最新版本信息

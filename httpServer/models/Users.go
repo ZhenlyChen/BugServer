@@ -43,7 +43,8 @@ func (m *UserModel) AddUser(vID, name, email string) (bson.ObjectId, error) {
 		Name:     name,
 		Email:    email,
 		Info: UserInfo{
-			NikeName: "user_" + newUser.Hex(),
+			// NikeName: "user_" + newUser.Hex(),
+			NikeName: "new_user",
 			Avatar:   "default",
 		},
 	})
@@ -68,6 +69,12 @@ func (m *UserModel) GetUserByID(id string) (user Users, err error) {
 // GetUserByVID 根据VioletID查询用户
 func (m *UserModel) GetUserByVID(id string) (user Users, err error) {
 	err = m.DB.Find(bson.M{"vid": bson.ObjectIdHex(id)}).One(&user)
+	return
+}
+
+// GetUsers 获取所有用户
+func (m *UserModel) GetUsers() (users []Users, err error) {
+	err = m.DB.Find(nil).All(&users)
 	return
 }
 
