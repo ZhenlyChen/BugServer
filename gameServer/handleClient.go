@@ -36,7 +36,7 @@ func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
 			s.joinRoom(id, &buf, addr)
 		} else if buf[0] == '1' { // 传入数据
 			s.setInput(id, &buf)
-		} else if buf[0] == '2' { // 返回结果
+		} else if buf[0] == '2' { // 设置帧数
 			s.setFrame(id, &buf)
 		} else if buf[0] == '3' { // 退出房间
 			s.goOutRoom(id, addr)
@@ -50,14 +50,14 @@ func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
 }
 
 func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
-	for i := range s.Room[id].Players {
-		if s.Room[id].Players[i].IP.String() == addr.String() {
-			continue
-		}
-	}
 	data := UserComeIn{}
-	// fmt.Println(string(buf[1 : bytes.IndexByte(buf[1:], 0)+1]))
 	if err := json.Unmarshal(buf[1:bytes.IndexByte(buf[1:], 0)+1], &data); err == nil {
+		for i := range s.Room[id].Players {
+			if s.Room[id].Players[i].ID == data.ID || s.Room[id].Players[i].IP.String() == addr.String() {
+				s.Room[id].conn.WriteToUDP([]byte("ok"), addr)
+				return
+			}
+		}
 		s.Room[id].Players = append(s.Room[id].Players, Player{
 			IP:        addr,
 			ID:        data.ID,
@@ -70,6 +70,7 @@ func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 		}
 		fmt.Println("Come in ", addr.String())
 		fmt.Println(len(s.Room[id].Players), '/', s.Room[id].People)
+		s.Room[id].conn.WriteToUDP([]byte("ok"), addr)
 	}
 }
 
@@ -105,6 +106,7 @@ func (s *GameServer) goOutRoom(id int, addr *net.UDPAddr) {
 		if s.Room[id].Players[i].IP.String() == addr.String() {
 			s.Room[id].Players = append(s.Room[id].Players[:i], s.Room[id].Players[i+1:]...)
 			fmt.Println("Go out: ", addr.String())
+			s.Room[id].conn.WriteToUDP([]byte("ok"), addr)
 			break
 		}
 	}
