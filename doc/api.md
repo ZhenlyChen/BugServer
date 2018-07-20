@@ -214,7 +214,7 @@ type InfoReq struct {
 
 ### GET /user/info/{userID} 获取用户信息
 
-userID为空时候获取自身信息
+userID为self时候获取自身信息
 
 返回
 
