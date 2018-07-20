@@ -19,8 +19,9 @@ type FrameState struct {
 
 // Commend ...
 type Commend struct {
-	UserID int `json:"id"`
-	Input  int `json:"input"`
+	UserID int      `json:"id"`
+	Input  int      `json:"input"`
+	Loc    Location `json:"loc"`
 }
 
 // 并发发送数据

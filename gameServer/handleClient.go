@@ -9,8 +9,10 @@ import (
 
 // UserData ...
 type UserData struct {
-	ID    int `json:"id"`
-	Input int `json:"input"`
+	ID    int     `json:"id"`
+	Input int     `json:"input"`
+	LocX  float32 `json:"x"`
+	LocY  float32 `json:"y"`
 }
 
 // UserBack ...
@@ -83,6 +85,10 @@ func (s *GameServer) setInput(id int, buf *[1024]byte) {
 		s.Room[id].Frame[currentFrame].Commends = append(s.Room[id].Frame[currentFrame].Commends, Commend{
 			UserID: data.ID,
 			Input:  data.Input,
+			Loc: Location{
+				X: data.LocX,
+				Y: data.LocY,
+			},
 		})
 		s.Room[id].Lock.Unlock()
 	}

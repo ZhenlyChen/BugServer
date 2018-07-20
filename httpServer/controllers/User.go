@@ -43,6 +43,8 @@ func (c *UsersController) PostLogin() (result CommonRes) {
 		result.Status = StatusNotValid
 		result.Msg = data
 		return
+	} else {
+		c.Session.Delete("email")
 	}
 
 	userID, nikeName, tErr := c.Service.GetUserFromViolet(data)
@@ -175,11 +177,11 @@ func (c *UsersController) GetInfoBy(id string) (res UserRes) {
 		res.Status = StatusNotLogin
 		return
 	}
-	if id != "" && !bson.IsObjectIdHex(id) {
+	if id == "" || id == "self" {
+		id = c.Session.GetString("id")
+	} else if !bson.IsObjectIdHex(id) {
 		res.Status = StatusBadReq
 		return
-	} else if id == "" {
-		id = c.Session.GetString("id")
 	}
 	user, err := c.Service.GetUserInfo(id)
 	if err != nil {
