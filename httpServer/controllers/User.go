@@ -165,6 +165,7 @@ func (c *UsersController) PostInfo() (res CommonRes) {
 // UserRes GET /user/info/{userID} 返回值
 type UserRes struct {
 	Status   string `json:"status"`
+	ID       string `json:"id"`
 	NikeName string `json:"nikeName"`
 	Avatar   string `json:"avatar"`
 	Gender   int    `json:"gender"`
@@ -189,6 +190,7 @@ func (c *UsersController) GetInfoBy(id string) (res UserRes) {
 		return
 	}
 	res.Status = StatusSuccess
+	res.ID = user.ID.Hex()
 	res.NikeName = user.Info.NikeName
 	res.Avatar = user.Info.Avatar
 	res.Gender = user.Info.Gender

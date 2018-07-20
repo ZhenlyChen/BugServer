@@ -220,6 +220,7 @@ userID为self时候获取自身信息
 
 ```go
 type UserRes struct {
+    ID       string `json:"id"`
 	Status   string `json:"status"`
 	NikeName string `json:"nikeName"`
 	Avatar   string `json:"avatar"`
