@@ -100,7 +100,7 @@ type ValidReq struct {
 
 // PostValid POST /user/valid/ 验证邮箱
 func (c *UsersController) PostValid() (res CommonRes) {
-	if c.Session.Get("id") == nil {
+	if c.Session.Get("email") == nil {
 		res.Status = StatusNotLogin
 		return
 	}
@@ -108,12 +108,7 @@ func (c *UsersController) PostValid() (res CommonRes) {
 	if err := c.Ctx.ReadJSON(&req); err != nil {
 		res.Status = StatusBadReq
 	}
-	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
-	if err != nil {
-		res.Msg = err.Error()
-		return
-	}
-	if err := c.Service.ValidEmail(user.Email, req.VCode); err != nil {
+	if err := c.Service.ValidEmail(c.Session.GetString("email"), req.VCode); err != nil {
 		res.Status = err.Error()
 	} else {
 		res.Status = StatusSuccess
