@@ -5,12 +5,12 @@
 * [API](#api)
   * [目录](#%E7%9B%AE%E5%BD%95)
   * [User](#user)
-    * [POST /users/login 登陆](#post-userslogin-%E7%99%BB%E9%99%86)
-    * [POST /users/register 注册](#post-usersregister-%E6%B3%A8%E5%86%8C)
+    * [POST /user/login 登陆](#post-userlogin-%E7%99%BB%E9%99%86)
+    * [POST /user/register 注册](#post-userregister-%E6%B3%A8%E5%86%8C)
     * [POST /user/email 获取邮箱验证码](#post-useremail-%E8%8E%B7%E5%8F%96%E9%82%AE%E7%AE%B1%E9%AA%8C%E8%AF%81%E7%A0%81)
     * [POST /user/valid 验证邮箱验证码](#post-uservalid-%E9%AA%8C%E8%AF%81%E9%82%AE%E7%AE%B1%E9%AA%8C%E8%AF%81%E7%A0%81)
-    * [POST /users/logout 退出登陆](#post-userslogout-%E9%80%80%E5%87%BA%E7%99%BB%E9%99%86)
-    * [POST /users/Info 设置用户信息](#post-usersinfo-%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
+    * [POST /user/logout 退出登陆](#post-userlogout-%E9%80%80%E5%87%BA%E7%99%BB%E9%99%86)
+    * [POST /user/Info 设置用户信息](#post-userinfo-%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
     * [GET /user/info/\{userID\} 获取用户信息](#get-userinfouserid-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
   * [Room](#room)
     * [GET /room/heart 房间心跳包](#get-roomheart-%E6%88%BF%E9%97%B4%E5%BF%83%E8%B7%B3%E5%8C%85)
@@ -41,7 +41,7 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 ## User
 
-### POST /users/login 登陆
+### POST /user/login 登陆
 
 参数
 
@@ -77,7 +77,7 @@ type LoginReq struct {
 }
 ```
 
-### POST /users/register 注册
+### POST /user/register 注册
 
 参数
 
@@ -168,7 +168,7 @@ type ValidReq struct {
 }
 ```
 
-### POST /users/logout 退出登陆
+### POST /user/logout 退出登陆
 
 无参数
 
@@ -181,7 +181,7 @@ type ValidReq struct {
 }
 ```
 
-### POST /users/Info 设置用户信息
+### POST /user/Info 设置用户信息
 
 参数
 
