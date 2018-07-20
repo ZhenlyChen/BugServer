@@ -437,6 +437,9 @@ func (s *roomService) SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, title, 
 }
 
 func (s *roomService) deleteRoom(roomID int) error {
+	if len(s.Rooms) == 0 {
+		return nil
+	}
 	for i := range s.Rooms {
 		if s.Rooms[i].ID == roomID {
 			s.Rooms = append(s.Rooms[:i], s.Rooms[i+1:]...)

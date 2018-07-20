@@ -39,6 +39,7 @@ func (c *UsersController) PostLogin() (result CommonRes) {
 		return
 	}
 	if !valid { // 用户邮箱未激活
+		c.Session.Set("email", data)
 		result.Status = StatusNotValid
 		result.Msg = data
 		return
@@ -80,16 +81,11 @@ func (c *UsersController) PostRegister() (res CommonRes) {
 
 // PostEmail POST /user/email 获取邮箱验证码
 func (c *UsersController) PostEmail() (res CommonRes) {
-	if c.Session.Get("id") == nil {
+	if c.Session.Get("email") == nil {
 		res.Status = StatusNotLogin
 		return
 	}
-	user, err := c.Service.GetUserInfo(c.Session.GetString("id"))
-	if err != nil {
-		res.Status = err.Error()
-		return
-	}
-	if err := c.Service.GetEmailCode(user.Email); err != nil {
+	if err := c.Service.GetEmailCode(c.Session.GetString("email")); err != nil {
 		res.Status = err.Error()
 	} else {
 		res.Status = StatusSuccess
