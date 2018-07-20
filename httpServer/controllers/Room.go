@@ -71,7 +71,7 @@ func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 		}
 	}
 	endIndex := page * pageSize
-	if res.Count < (page-1)*pageSize {
+	if res.Count <= (page-1)*pageSize {
 		res.Status = StatusNull
 		return
 	} else if res.Count < page*pageSize {
