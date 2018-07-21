@@ -230,6 +230,36 @@ func (c *RoomsController) PostReadyBy(isReady string) (res CommonRes) {
 	return
 }
 
+
+// PostReadyBy POST /room/play/{true/false} 设置开始状态
+func (c *RoomsController) PostPlayBy(isPlaying string) (res CommonRes) {
+	// 是否登陆
+	if c.Session.Get("id") == nil {
+		res.Status = StatusNotLogin
+		return
+	}
+	// 是否在房间里面
+	roomID, err := c.Session.GetInt("room")
+	if err != nil {
+		res.Status = StatusNotFound
+		return
+	}
+	if isPlaying != "true" && isPlaying != "false" {
+		res.Status = StatusBadReq
+		return
+	}
+	playing := false
+	if isPlaying == "true" {
+		playing = true
+	}
+	if err := c.Service.SetPlaying(roomID, c.Session.GetString("id"), playing); err != nil {
+		res.Status = err.Error()
+		return
+	}
+	res.Status = StatusSuccess
+	return
+}
+
 // PostTeamBy POST /room/team/{teamID} 设置队伍
 func (c *RoomsController) PostTeamBy(teamStr string) (res CommonRes) {
 	// 是否登陆

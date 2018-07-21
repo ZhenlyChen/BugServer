@@ -2,6 +2,9 @@
 
 ## 目录
 
+Table of Contents
+=================
+
 * [API](#api)
   * [目录](#%E7%9B%AE%E5%BD%95)
   * [User](#user)
@@ -24,6 +27,7 @@
     * [POST /room/quit 退出房间](#post-roomquit-%E9%80%80%E5%87%BA%E6%88%BF%E9%97%B4)
     * [POST /room/info 设置房间信息](#post-roominfo-%E8%AE%BE%E7%BD%AE%E6%88%BF%E9%97%B4%E4%BF%A1%E6%81%AF)
     * [POST /room/own/\{userId\} 设置房主](#post-roomownuserid-%E8%AE%BE%E7%BD%AE%E6%88%BF%E4%B8%BB)
+    * [POST /room/play/\{true/false\} 设置开始状态](#post-roomplaytruefalse-%E8%AE%BE%E7%BD%AE%E5%BC%80%E5%A7%8B%E7%8A%B6%E6%80%81)
     * [POST /room/out/\{userId\} 踢人](#post-roomoutuserid-%E8%B8%A2%E4%BA%BA)
     * [POST /room/start 开始游戏](#post-roomstart-%E5%BC%80%E5%A7%8B%E6%B8%B8%E6%88%8F)
   * [Game](#game)
@@ -570,6 +574,27 @@ status = "not_found"
 status = "bad_req"
 // 你不是房主
 status = "not_allow"
+```
+
+
+
+### POST /room/play/{true/false} 设置开始状态
+
+返回值
+
+```json
+{
+    "status": "success",
+    "msg": ""
+}
+// 成功
+status = "success"
+// 没有登陆
+status = "not_login"
+// 非法请求
+status = "bad_req"
+// 用户不在房间里面
+status = "not_found"
 ```
 
 

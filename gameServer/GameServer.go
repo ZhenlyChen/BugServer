@@ -30,12 +30,6 @@ type RoomData struct {
 	Running      bool
 	Lock         *sync.RWMutex
 }
-
-type Location struct {
-	X  float32
-	Y  float32
-}
-
 // Player ...
 type Player struct {
 	IP        *net.UDPAddr

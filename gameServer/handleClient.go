@@ -9,21 +9,22 @@ import (
 
 // UserData ...
 type UserData struct {
-	ID    int     `json:"id"`
-	Input int     `json:"input"`
+	ID    int     `json:"i"`
+	Input int     `json:"c"`
 	LocX  float32 `json:"x"`
 	LocY  float32 `json:"y"`
+	Dir   int     `json:"d"`
 }
 
 // UserBack ...
 type UserBack struct {
-	ID    int `json:"id"`
-	Frame int `json:"frame"`
+	ID    int `json:"i"`
+	Frame int `json:"f"`
 }
 
 // UserComeIn ...
 type UserComeIn struct {
-	ID int `json:"id"`
+	ID int `json:"i"`
 }
 
 func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
@@ -82,13 +83,12 @@ func (s *GameServer) setInput(id int, buf *[1024]byte) {
 		// 写入帧，互斥锁
 		s.Room[id].Lock.Lock()
 		currentFrame := s.Room[id].CurrentFrame - 1
-		s.Room[id].Frame[currentFrame].Commends = append(s.Room[id].Frame[currentFrame].Commends, Commend{
+		s.Room[id].Frame[currentFrame].Commands = append(s.Room[id].Frame[currentFrame].Commands, Command{
 			UserID: data.ID,
 			Input:  data.Input,
-			Loc: Location{
-				X: data.LocX,
-				Y: data.LocY,
-			},
+			LocX: data.LocX,
+			LocY: data.LocY,
+			Dir: data.Dir,
 		})
 		s.Room[id].Lock.Unlock()
 	}

@@ -25,6 +25,7 @@ type RoomService interface {
 	// 房主
 	StartGame(roomID int, ownID string) error
 	SetRoomOwn(roomID int, ownID, newOwnID string) error
+    SetPlaying(roomID int, userID string, isPlaying bool) error
 	AddRoom(ownID, title, mode, gameMap, password string, maxPlayer int, isRandom bool) (roomID int, err error)
 	SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, title, password string, isRandom bool) error
 	GetOutRoom(roomID int, ownID, userID string) error
@@ -79,15 +80,21 @@ func (s *roomService) CheckHeart() {
 	for {
 		time.Sleep(time.Second)
 		s.roomLock.Lock()
+		isQuit := false
 		for i := range s.Rooms {
 			for j := range s.Rooms[i].Players {
 				if s.Rooms[i].Players[j].Heart > 3 {
 					s.roomLock.Unlock()
 					s.QuitRoom(s.Rooms[i].ID, s.Rooms[i].Players[j].UserID)
 					s.roomLock.Lock()
+					isQuit = true
+					break
 				} else {
 					s.Rooms[i].Players[j].Heart++
 				}
+			}
+			if isQuit {
+				break
 			}
 		}
 		s.roomLock.Unlock()
@@ -235,6 +242,13 @@ func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxP
 	}
 	s.roomLock.Lock()
 	defer s.roomLock.Unlock()
+	for _, room := range s.Rooms {
+		for _, player := range room.Players {
+			if player.UserID == ownID {
+				return 0, ErrNotAllow
+			}
+		}
+	}
 	roomID = s.newRoomID()
 	s.Rooms = append(s.Rooms, GameRoom{
 		ID:        roomID,
@@ -273,6 +287,11 @@ func (s *roomService) JoinRoom(roomID int, userID, password string) error {
 	if room.MaxPlayer == len(room.Players) {
 		return ErrMaxPlayer
 	}
+	for _, player := range room.Players {
+		if player.UserID == userID {
+			return ErrNotAllow
+		}
+	}
 	room.Players = append(room.Players, Player{
 		UserID:  userID,
 		GameID:  s.newGameID(room.Players),
@@ -293,6 +312,11 @@ func (s *roomService) StartGame(roomID int, ownID string) error {
 	}
 	// 房主权限
 	if room.OwnID != ownID {
+		return ErrNotAllow
+	}
+	room.Playing = false
+	// 是否在玩
+	if room.Port != -1 {
 		return ErrNotAllow
 	}
 	// 玩家是否全部已经准备
@@ -349,6 +373,22 @@ func (s *roomService) SetReady(roomID int, userID string, isReady bool) error {
 	}
 	// 找不到用户
 	return ErrNotFound
+}
+
+// SetPlaying 设置开始状态
+func (s *roomService) SetPlaying(roomID int, userID string, isPlaying bool) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
+	room, err := s.GetRoom(roomID)
+	if err != nil {
+		return err
+	}
+	if room.OwnID != userID {
+		return ErrNotAllow
+	}
+	room.Playing = isPlaying
+	// 找不到用户
+	return nil
 }
 
 // SetReady 设置角色

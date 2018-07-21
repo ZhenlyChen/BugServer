@@ -8,27 +8,28 @@ import (
 
 // ResData ...
 type ResData struct {
-	Data []FrameState `json:"data"`
+	Data []FrameState `json:"d"`
 }
 
 // FrameState ...
 type FrameState struct {
-	FrameID  int       `json:"frameID"`
-	Commends []Commend `json:"commends"`
+	FrameID  int       `json:"f"`
+	Commands []Command `json:"c"`
 }
 
 // Commend ...
-type Commend struct {
-	UserID int      `json:"id"`
-	Input  int      `json:"input"`
-	Loc    Location `json:"loc"`
+type Command struct {
+	UserID int     `json:"i"`
+	Input  int     `json:"c"`
+	LocX   float32 `json:"x"`
+	LocY   float32 `json:"y"`
+	Dir    int     `json:"d"`
 }
 
 // 并发发送数据
 func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 	var res ResData
 	// 检测是否掉线
-	fmt.Println(s.Room[rID].Players[pID].MissFrame)
 	if s.Room[rID].Players[pID].MissFrame > 100 {
 		// 判断为已经掉线
 		s.goOutRoom(rID, s.Room[rID].Players[pID].IP)
@@ -73,7 +74,7 @@ func (s *GameServer) sendAll(id int) {
 		s.Room[id].Lock.Lock()
 		s.Room[id].Frame = append(s.Room[id].Frame, FrameState{
 			FrameID:  s.Room[id].CurrentFrame + 1,
-			Commends: []Commend{},
+			Commands: []Command{},
 		})
 		s.Room[id].CurrentFrame++
 		s.Room[id].Lock.Unlock()
