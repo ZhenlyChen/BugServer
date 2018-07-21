@@ -6,6 +6,7 @@ import (
 	"github.com/ZhenlyChen/BugServer/gameServer"
 	"math/rand"
 	"strconv"
+	"sync"
 )
 
 // RoomService ...
@@ -30,9 +31,10 @@ type RoomService interface {
 }
 
 type roomService struct {
-	Service *Service
-	Game    *gameServer.GameServer
-	Rooms   []GameRoom
+	Service  *Service
+	Game     *gameServer.GameServer
+	Rooms    []GameRoom
+	roomLock *sync.RWMutex
 }
 
 // GameMode 游戏模式
@@ -51,6 +53,7 @@ const (
 type GameRoom struct {
 	ID        int      `json:"id"`        // 房间 ID
 	OwnID     string   `json:"ownId"`     // 房主ID
+	OwnName   string   `json:"ownName"`   // 房主名字
 	Port      int      `json:"port"`      // 房间服务器端口
 	Title     string   `json:"title"`     // 标题
 	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
@@ -75,21 +78,28 @@ type Player struct {
 func (s *roomService) CheckHeart() {
 	for {
 		time.Sleep(time.Second)
+		s.roomLock.Lock()
 		for i := range s.Rooms {
 			for j := range s.Rooms[i].Players {
 				if s.Rooms[i].Players[j].Heart > 3 {
+					s.roomLock.Unlock()
 					s.QuitRoom(s.Rooms[i].ID, s.Rooms[i].Players[j].UserID)
+					s.roomLock.Lock()
 				} else {
 					s.Rooms[i].Players[j].Heart++
 				}
 			}
 		}
+		s.roomLock.Unlock()
 	}
 }
 
 func (s *roomService) Heart(userID string, roomID int) bool {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
+
 		return false
 	}
 	for i := range room.Players {
@@ -203,6 +213,8 @@ func (s *roomService) getTeamID(players []Player, mode string) int {
 
 // GetPlayers 获取房间内玩家信息
 func (s *roomService) GetPlayers(roomID int) (info []PlayerInfo, err error) {
+	s.roomLock.RLock()
+	defer s.roomLock.RUnlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return
@@ -221,6 +233,8 @@ func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxP
 	if maxPlayer > 20 {
 		return 0, ErrMaxPlayer
 	}
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	roomID = s.newRoomID()
 	s.Rooms = append(s.Rooms, GameRoom{
 		ID:        roomID,
@@ -231,6 +245,7 @@ func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxP
 		Title:     title,
 		Mode:      mode,
 		OwnID:     ownID,
+		OwnName:   s.Service.User.GetUserBaseInfo(ownID).Name,
 		Playing:   false,
 		IsRandom:  isRandom,
 		Players: []Player{{
@@ -246,6 +261,8 @@ func (s *roomService) AddRoom(ownID, title, mode, gameMap, password string, maxP
 
 // JoinRoom 加入房间
 func (s *roomService) JoinRoom(roomID int, userID, password string) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -268,6 +285,8 @@ func (s *roomService) JoinRoom(roomID int, userID, password string) error {
 
 // StartGame 开始游戏
 func (s *roomService) StartGame(roomID int, ownID string) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -316,6 +335,8 @@ func (s *roomService) StartGame(roomID int, ownID string) error {
 
 // SetReady 设置准备状态
 func (s *roomService) SetReady(roomID int, userID string, isReady bool) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -332,6 +353,8 @@ func (s *roomService) SetReady(roomID int, userID string, isReady bool) error {
 
 // SetReady 设置角色
 func (s *roomService) SetRole(roomID int, userID, role string) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -348,6 +371,8 @@ func (s *roomService) SetRole(roomID int, userID, role string) error {
 
 // SetTeam 设置队伍
 func (s *roomService) SetTeam(roomID, teamID int, userID string) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -388,6 +413,8 @@ func (s *roomService) SetTeam(roomID, teamID int, userID string) error {
 
 // GetOutRoom 房主踢人
 func (s *roomService) GetOutRoom(roomID int, ownID, userID string) error {
+	s.roomLock.RLock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -400,6 +427,8 @@ func (s *roomService) GetOutRoom(roomID int, ownID, userID string) error {
 
 // SetRoomOwn 设置新的房主
 func (s *roomService) SetRoomOwn(roomID int, ownID, newOwnID string) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -410,6 +439,7 @@ func (s *roomService) SetRoomOwn(roomID int, ownID, newOwnID string) error {
 	for _, player := range room.Players {
 		if player.UserID == newOwnID {
 			room.OwnID = newOwnID
+			room.OwnName = s.Service.User.GetUserBaseInfo(newOwnID).Name
 			return nil
 		}
 	}
@@ -418,6 +448,8 @@ func (s *roomService) SetRoomOwn(roomID int, ownID, newOwnID string) error {
 
 // SetRoomInfo 设置房间信息
 func (s *roomService) SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, title, password string, isRandom bool) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err
@@ -443,6 +475,7 @@ func (s *roomService) deleteRoom(roomID int) error {
 	for i := range s.Rooms {
 		if s.Rooms[i].ID == roomID {
 			s.Rooms = append(s.Rooms[:i], s.Rooms[i+1:]...)
+			return nil
 		}
 	}
 	return ErrNotFound
@@ -450,6 +483,8 @@ func (s *roomService) deleteRoom(roomID int) error {
 
 // QuitRoom 退出房间
 func (s *roomService) QuitRoom(roomID int, userID string) error {
+	s.roomLock.Lock()
+	defer s.roomLock.Unlock()
 	room, err := s.GetRoom(roomID)
 	if err != nil {
 		return err

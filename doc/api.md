@@ -282,6 +282,7 @@ type RoomsRes struct {
 type GameRoom struct {
 	ID        int      `json:"id"`        // 房间 ID
 	OwnID     string   `json:"ownId"`     // 房主ID
+    OwnName   string   `json:"ownName"`   // 房主名字
 	Port      int      `json:"port"`      // 房间服务器端口
 	Title     string   `json:"title"`     // 标题
 	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
@@ -316,6 +317,7 @@ type RoomRes struct {
 type GameRoom struct {
 	ID        int      `json:"id"`        // 房间 ID
 	OwnID     string   `json:"ownId"`     // 房主ID
+    OwnName   string   `json:"ownName"`   // 房主名字
 	Port      int      `json:"port"`      // 房间服务器端口
 	Title     string   `json:"title"`     // 标题
 	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
@@ -679,6 +681,8 @@ type UserComeIn struct {
 type UserData struct {
 	ID    int `json:"id"`
 	Input int `json:"input"`
+    LocX float32 `json:"x"`
+    LocY float32 `json:"y"`
 }
 ```
 
