@@ -8,8 +8,6 @@ import (
 	"github.com/ZhenlyChen/BugServer/httpServer/controllers"
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
 	"github.com/ZhenlyChen/BugServer/httpServer/services"
-	"github.com/betacraft/yaag/irisyaag"
-	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
@@ -40,14 +38,6 @@ func RunServer(c Config) {
 
 	// 启动服务器
 	app := iris.New()
-
-	// 文档生成器
-	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. On: true,
-		DocTitle: "Iris",
-		DocPath:  "apidoc.html",
-		BaseUrls: map[string]string{"Production": "", "Staging": ""},
-	})
-	app.Use(irisyaag.New())
 
 	if c.Server.Dev {
 		app.Logger().SetLevel("debug")

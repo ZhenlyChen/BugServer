@@ -23,7 +23,7 @@ type GameServer struct {
 
 // RoomData ...
 type RoomData struct {
-	conn         *net.UDPConn
+	Conn         *net.UDPConn
 	Players      []Player
 	Frame        []FrameState
 	CurrentFrame int
@@ -32,6 +32,7 @@ type RoomData struct {
 	CreateTime   time.Time
 	Lock         *sync.RWMutex
 }
+
 // Player ...
 type Player struct {
 	IP        *net.UDPAddr
@@ -48,8 +49,11 @@ func (s *GameServer) InitServer(c ServerConfig) {
 
 func (s *GameServer) clearRoom() bool {
 	for i := range s.Room {
-		if s.Room[i].Running == false && time.Now().Unix() - s.Room[i].CreateTime.Unix() > 60 {
+		if (s.Room[i].Running == false || len(s.Room[i].Players) == 0) && time.Now().Unix()-s.Room[i].CreateTime.Unix() > 60 {
+			s.Room[i].Conn.Close()
 			s.Room = append(s.Room[:i], s.Room[i+1:]...)
+			s.CurrentLoad--
+			fmt.Println("close room")
 			return false
 		}
 	}
@@ -58,7 +62,7 @@ func (s *GameServer) clearRoom() bool {
 
 // NewRoom 开房
 func (s *GameServer) NewRoom(people int) (port int) {
-	for s.clearRoom() {
+	for !s.clearRoom() {
 		// nothing
 	}
 	if s.CurrentLoad > s.Config.PortPoolSize {
@@ -72,6 +76,7 @@ func (s *GameServer) NewRoom(people int) (port int) {
 	checkError(err)
 	fmt.Println("GameServer is running in " + service)
 	s.Room = append(s.Room, RoomData{
+		Conn:         conn,
 		Players:      []Player{},
 		Frame:        []FrameState{},
 		CurrentFrame: 0,

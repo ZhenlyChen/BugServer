@@ -30,12 +30,13 @@ type Command struct {
 func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 	var res ResData
 	// 检测是否掉线
-	if s.Room[rID].Players[pID].MissFrame > 100 {
+	if s.Room[rID].Players[pID].MissFrame > 200 {
 		// 判断为已经掉线
-		s.goOutRoom(rID, s.Room[rID].Players[pID].IP)
+		s.Room[rID].Players[pID].MissFrame = 999
 		c <- 0
 		return
 	}
+
 	s.Room[rID].Players[pID].MissFrame++
 	if s.Room[rID].CurrentFrame-s.Room[rID].Players[pID].Frame > 10 {
 		res = ResData{
@@ -50,13 +51,18 @@ func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	s.Room[rID].conn.WriteToUDP(b, s.Room[rID].Players[pID].IP)
+	s.Room[rID].Conn.WriteToUDP(b, s.Room[rID].Players[pID].IP)
 	c <- 0
 }
 
 func (s *GameServer) sendAll(id int) {
-	s.Room[id].Running = true
 	for {
+		for i := range s.Room[id].Players {
+			if s.Room[id].Players[i].MissFrame == 999 {
+				s.goOutRoom(id, s.Room[id].Players[i].IP)
+				break
+			}
+		}
 		// 并发发送数据给用户
 		c := make(chan int)
 		playerCount := len(s.Room[id].Players)
@@ -77,8 +83,9 @@ func (s *GameServer) sendAll(id int) {
 			Commands: []Command{},
 		})
 		s.Room[id].CurrentFrame++
+		s.Room[id].Running = true
 		s.Room[id].Lock.Unlock()
 		// 解锁
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 33)
 	}
 }

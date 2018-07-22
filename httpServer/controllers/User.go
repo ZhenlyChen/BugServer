@@ -76,6 +76,7 @@ func (c *UsersController) PostRegister() (res CommonRes) {
 	if err := c.Service.Register(req.Name, req.Email, req.Password); err != nil {
 		res.Status = err.Error()
 	} else {
+		c.Session.Set("email", req.Name)
 		res.Status = StatusSuccess
 	}
 	return

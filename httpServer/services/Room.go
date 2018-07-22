@@ -25,7 +25,7 @@ type RoomService interface {
 	// 房主
 	StartGame(roomID int, ownID string) error
 	SetRoomOwn(roomID int, ownID, newOwnID string) error
-    SetPlaying(roomID int, userID string, isPlaying bool) error
+	SetPlaying(roomID int, userID string, isPlaying bool) error
 	AddRoom(ownID, title, mode, gameMap, password string, maxPlayer int, isRandom bool) (roomID int, err error)
 	SetRoomInfo(roomID, maxPlayer int, ownID, gameMap, title, password string, isRandom bool) error
 	GetOutRoom(roomID int, ownID, userID string) error
@@ -52,13 +52,15 @@ const (
 
 // GameRoom 房间数据
 type GameRoom struct {
-	ID        int      `json:"id"`        // 房间 ID
-	OwnID     string   `json:"ownId"`     // 房主ID
-	OwnName   string   `json:"ownName"`   // 房主名字
-	Port      int      `json:"port"`      // 房间服务器端口
-	Title     string   `json:"title"`     // 标题
-	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
-	GameMap   string   `json:"gameMap"`   // 游戏地图
+	ID        int      `json:"id"`       // 房间 ID
+	OwnID     string   `json:"ownId"`    // 房主ID
+	OwnName   string   `json:"ownName"`  // 房主名字
+	Port      int      `json:"port"`     // 房间服务器端口
+	Title     string   `json:"title"`    // 标题
+	IsRandom  bool     `json:"isRandom"` // 是否随机角色
+	GameMap   string   `json:"gameMap"`  // 游戏地图
+	FireX     int      `json:"fireX"`
+	FireY     int      `json:"fireY"`
 	MaxPlayer int      `json:"maxPlayer"` // 最大人数
 	Mode      string   `json:"mode"`      // 游戏模式
 	Password  string   `json:"password"`  // 房间密码
@@ -349,7 +351,8 @@ func (s *roomService) StartGame(roomID int, ownID string) error {
 			room.Players[i].RoleID = strconv.Itoa(rand.Intn(gameInfo.MaxRole))
 		}
 	}
-
+	room.FireX = rand.Intn(100)
+	room.FireY = rand.Intn(100)
 	// 建立房间服务器
 	room.Port = s.Game.NewRoom(len(room.Players))
 	if room.Port == -1 {
