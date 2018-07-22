@@ -82,6 +82,9 @@ func (s *roomService) CheckHeart() {
 		s.roomLock.Lock()
 		isQuit := false
 		for i := range s.Rooms {
+			if s.Rooms[i].Playing {
+				continue
+			}
 			for j := range s.Rooms[i].Players {
 				if s.Rooms[i].Players[j].Heart > 3 {
 					s.roomLock.Unlock()

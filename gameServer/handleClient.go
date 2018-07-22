@@ -32,7 +32,8 @@ func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
 	for {
 		var buf [1024]byte
 		_, addr, err := conn.ReadFromUDP(buf[0:]) // 等待连接
-		if err != nil || buf[1023] != 0 {
+		if err != nil || buf[1023] != 0 || len(s.Room) <= id {
+			fmt.Println("Error")
 			return
 		}
 		if buf[0] == '0' { // 加入房间
@@ -86,9 +87,9 @@ func (s *GameServer) setInput(id int, buf *[1024]byte) {
 		s.Room[id].Frame[currentFrame].Commands = append(s.Room[id].Frame[currentFrame].Commands, Command{
 			UserID: data.ID,
 			Input:  data.Input,
-			LocX: data.LocX,
-			LocY: data.LocY,
-			Dir: data.Dir,
+			LocX:   data.LocX,
+			LocY:   data.LocY,
+			Dir:    data.Dir,
 		})
 		s.Room[id].Lock.Unlock()
 	}

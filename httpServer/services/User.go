@@ -111,7 +111,7 @@ func (s *userService) SetUserInfo(id string, info models.UserInfo) error {
 	s.GetUserBaseInfo(id)
 	s.UserInfo[id] = UserBaseInfo{
 		Avatar: info.Avatar,
-		Name: info.NikeName,
+		Name:   info.NikeName,
 		Gender: info.Gender,
 	}
 	return s.Model.SetUserInfo(id, info)

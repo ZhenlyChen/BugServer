@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"time"
 )
 
 // ServerConfig ...
@@ -28,6 +29,7 @@ type RoomData struct {
 	CurrentFrame int
 	People       int
 	Running      bool
+	CreateTime   time.Time
 	Lock         *sync.RWMutex
 }
 // Player ...
@@ -44,8 +46,21 @@ func (s *GameServer) InitServer(c ServerConfig) {
 	s.CurrentLoad = 0
 }
 
+func (s *GameServer) clearRoom() bool {
+	for i := range s.Room {
+		if s.Room[i].Running == false && time.Now().Unix() - s.Room[i].CreateTime.Unix() > 60 {
+			s.Room = append(s.Room[:i], s.Room[i+1:]...)
+			return false
+		}
+	}
+	return true
+}
+
 // NewRoom 开房
 func (s *GameServer) NewRoom(people int) (port int) {
+	for s.clearRoom() {
+		// nothing
+	}
 	if s.CurrentLoad > s.Config.PortPoolSize {
 		// 负载以达上限
 		return -1
@@ -63,6 +78,7 @@ func (s *GameServer) NewRoom(people int) (port int) {
 		People:       people,
 		Running:      false,
 		Lock:         new(sync.RWMutex),
+		CreateTime:   time.Now(),
 	})
 	fmt.Println(s.Room)
 	go s.handleClient(conn, s.CurrentLoad)
