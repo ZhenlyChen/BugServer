@@ -61,6 +61,7 @@ type GameRoom struct {
 	GameMap   string   `json:"gameMap"`  // 游戏地图
 	FireX     int      `json:"fireX"`
 	FireY     int      `json:"fireY"`
+	RandSeed  int      `json:"randSeed"`  // 随机种子
 	MaxPlayer int      `json:"maxPlayer"` // 最大人数
 	Mode      string   `json:"mode"`      // 游戏模式
 	Password  string   `json:"password"`  // 房间密码
@@ -353,6 +354,7 @@ func (s *roomService) StartGame(roomID int, ownID string) error {
 	}
 	room.FireX = rand.Intn(100)
 	room.FireY = rand.Intn(100)
+	room.RandSeed = rand.Intn(167167167)
 	// 建立房间服务器
 	room.Port = s.Game.NewRoom(len(room.Players))
 	if room.Port == -1 {

@@ -27,21 +27,16 @@ type UserComeIn struct {
 	ID int `json:"i"`
 }
 
-func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
-	if len(s.Room) <= id {
-		fmt.Println("Error")
-		return
-	}
-	s.Room[id].Conn = conn
+func (s *GameServer) handleClient(id int) {
 	for {
 		var buf [1024]byte
-		if conn == nil {
-			fmt.Println("Nil Error")
-			return
+		_, addr, err := s.Room[id].Conn.ReadFromUDP(buf[0:]) // 等待连接
+		if buf[1023] != 0 {
+			fmt.Println("Too Long Data")
+			continue
 		}
-		_, addr, err := conn.ReadFromUDP(buf[0:]) // 等待连接
-		if err != nil || buf[1023] != 0 || len(s.Room) <= id {
-			fmt.Println("Error")
+		if err != nil || s.Room[id].Using == false {
+			fmt.Println("Error data from room ", id)
 			return
 		}
 		if buf[0] == '0' { // 加入房间
@@ -54,9 +49,9 @@ func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
 			s.goOutRoom(id, addr)
 			// 删除对局
 			if len(s.Room[id].Players) == 0 {
-				s.Room[id].Conn.Close()
-				s.Room = append(s.Room[:id], s.Room[id+1:]...)
-				s.CurrentLoad--
+				s.Lock.Lock()
+				s.closeRoom(id)
+				s.Lock.Unlock()
 			}
 			break
 		}
@@ -66,60 +61,77 @@ func (s *GameServer) handleClient(conn *net.UDPConn, id int) {
 func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 	data := UserComeIn{}
 	if err := json.Unmarshal(buf[1:bytes.IndexByte(buf[1:], 0)+1], &data); err == nil {
-		for i := range s.Room[id].Players {
-			if s.Room[id].Players[i].ID == data.ID || s.Room[id].Players[i].IP.String() == addr.String() {
-				s.Room[id].Conn.WriteToUDP(append([]byte("join"), 0), addr)
+		fmt.Println(s.Room[id])
+		s.Room[id].Lock.Lock()
+		room := &s.Room[id]
+		if room.Using == false {
+			// 房间已关闭
+			room.Lock.Unlock()
+			return
+		}
+		if len(room.Players) >= room.MaxPeople {
+			// 人数已满
+			room.Lock.Unlock()
+			return
+		}
+		for i := range room.Players {
+			if room.Players[i].ID == data.ID || room.Players[i].Addr.String() == addr.String() {
+				// 已经加入
+				room.Conn.WriteToUDP(append([]byte("join"), 0), addr)
+				room.Lock.Unlock()
 				return
 			}
 		}
-		s.Room[id].Lock.Lock()
-		s.Room[id].Players = append(s.Room[id].Players, Player{
-			IP:        addr,
+		room.Players = append(room.Players, Player{
+			Addr:      addr,
 			ID:        data.ID,
 			Frame:     0,
 			MissFrame: 0,
 		})
-		if len(s.Room[id].Players) == s.Room[id].People && s.Room[id].Running == false {
+		room.Lock.Unlock()
+		fmt.Println("Come in ", addr.String())
+		fmt.Println(len(room.Players), "/", room.MaxPeople)
+		room.Conn.WriteToUDP(append([]byte("join"), 0), addr)
+		if len(room.Players) == room.MaxPeople && room.Running == false {
 			fmt.Println("Game Begin")
+			// 开始发送帧信息
 			go s.sendAll(id)
 		}
-		s.Room[id].Lock.Unlock()
-		fmt.Println("Come in ", addr.String())
-		fmt.Println(len(s.Room[id].Players), "/", s.Room[id].People)
-		s.Room[id].Conn.WriteToUDP(append([]byte("join"), 0), addr)
 	}
 }
 
 func (s *GameServer) setInput(id int, buf *[1024]byte) {
-	if !s.Room[id].Running {
+	if !s.Room[id].Running || !s.Room[id].Using {
 		return
 	}
 	data := UserData{}
 	if err := json.Unmarshal(buf[1:bytes.IndexByte(buf[1:], 0)+1], &data); err == nil {
 		// 写入帧，互斥锁
 		s.Room[id].Lock.Lock()
-		currentFrame := s.Room[id].CurrentFrame - 1
-		s.Room[id].Frame[currentFrame].Commands = append(s.Room[id].Frame[currentFrame].Commands, Command{
+		room := &s.Room[id]
+		currentFrame := room.CurrentFrame - 1
+		room.Frame[currentFrame].Commands = append(room.Frame[currentFrame].Commands, Command{
 			UserID: data.ID,
 			Input:  data.Input,
 			LocX:   data.LocX,
 			LocY:   data.LocY,
 			Dir:    data.Dir,
 		})
-		s.Room[id].Lock.Unlock()
+		room.Lock.Unlock()
 	}
 }
 
 func (s *GameServer) setFrame(id int, buf *[1024]byte) {
 	data := UserBack{}
 	if err := json.Unmarshal(buf[1:bytes.IndexByte(buf[1:], 0)+1], &data); err == nil {
-		for i := range s.Room[id].Players {
-			if s.Room[id].Players[i].ID == data.ID {
-				s.Room[id].Lock.Lock()
-				s.Room[id].Players[i].Frame = data.Frame
-				s.Room[id].Players[i].MissFrame = 0
-				s.Room[id].Lock.Unlock()
-				continue
+		room := &s.Room[id]
+		for i := range room.Players {
+			if room.Players[i].ID == data.ID {
+				room.Lock.Lock()
+				room.Players[i].Frame = data.Frame
+				room.Players[i].MissFrame = 0
+				room.Lock.Unlock()
+				break
 			}
 		}
 	}
@@ -127,13 +139,14 @@ func (s *GameServer) setFrame(id int, buf *[1024]byte) {
 
 func (s *GameServer) goOutRoom(id int, addr *net.UDPAddr) {
 	s.Room[id].Lock.Lock()
-	for i := range s.Room[id].Players {
-		if s.Room[id].Players[i].IP.String() == addr.String() {
-			s.Room[id].Players = append(s.Room[id].Players[:i], s.Room[id].Players[i+1:]...)
+	room := &s.Room[id]
+	for i := range room.Players {
+		if room.Players[i].Addr.String() == addr.String() {
+			room.Players = append(room.Players[:i], room.Players[i+1:]...)
 			fmt.Println("Go out: ", addr.String())
-			s.Room[id].Conn.WriteToUDP(append([]byte("out"), 0), addr)
+			room.Conn.WriteToUDP(append([]byte("out"), 0), addr)
 			break
 		}
 	}
-	s.Room[id].Lock.Unlock()
+	room.Lock.Unlock()
 }

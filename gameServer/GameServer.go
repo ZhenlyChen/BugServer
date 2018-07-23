@@ -16,83 +16,99 @@ type ServerConfig struct {
 
 // GameServer ...
 type GameServer struct {
-	Config      ServerConfig
-	CurrentLoad int
-	Room        []RoomData
+	Config ServerConfig  // 配置
+	Room   []RoomData    // 房间
+	Lock   *sync.RWMutex // 房间读写锁
 }
 
 // RoomData ...
 type RoomData struct {
-	Conn         *net.UDPConn
-	Players      []Player
-	Frame        []FrameState
-	CurrentFrame int
-	People       int
-	Running      bool
-	CreateTime   time.Time
-	Lock         *sync.RWMutex
+	Using        bool          // 是否使用中
+	Running      bool          // 是否已经开始
+	Conn         *net.UDPConn  // 连接会话
+	Players      []Player      // 房间玩家
+	Frame        []FrameState  // 房间帧
+	CurrentFrame int           // 当前帧
+	MaxPeople    int           // 人数上限
+	CreateTime   time.Time     // 创建时间
+	Lock         *sync.RWMutex // 读写锁
 }
 
 // Player ...
 type Player struct {
-	IP        *net.UDPAddr
-	ID        int
-	Frame     int
-	MissFrame int
+	Addr      *net.UDPAddr // 玩家地址
+	ID        int          // 玩家ID
+	Frame     int          // 玩家当前帧
+	MissFrame int          // 玩家丢失帧
 }
 
 // InitServer 初始化游戏服务器
 func (s *GameServer) InitServer(c ServerConfig) {
 	s.Config = c
-	s.CurrentLoad = 0
+	s.Room = make([]RoomData, s.Config.PortPoolSize)
+	s.Lock = new(sync.RWMutex)
 }
 
 func (s *GameServer) clearRoom() bool {
 	for i := range s.Room {
+		if s.Room[i].Using == false {
+			continue
+		}
 		if (s.Room[i].Running == false || len(s.Room[i].Players) == 0) && time.Now().Unix()-s.Room[i].CreateTime.Unix() > 60 {
-			s.Room[i].Conn.Close()
-			s.Room = append(s.Room[:i], s.Room[i+1:]...)
-			s.CurrentLoad--
-			fmt.Println("close room")
+			s.closeRoom(i)
 			return false
 		}
 	}
 	return true
 }
 
-// NewRoom 开房
-func (s *GameServer) NewRoom(people int) (port int) {
-	for !s.clearRoom() {
-		// nothing
+func (s *GameServer) closeRoom(id int) {
+	s.Room[id].Conn.Close()
+	s.Room[id] = RoomData{}
+	fmt.Println("close room ", id)
+}
+
+func (s *GameServer) getNullRoom() int {
+	for i := range s.Room {
+		if s.Room[i].Using == false {
+			return i
+		}
 	}
-	if s.CurrentLoad > s.Config.PortPoolSize {
+	return -1
+}
+
+// NewRoom 开房
+func (s *GameServer) NewRoom(maxPeople int) (port int) {
+	s.Lock.Lock()
+	s.clearRoom()
+	roomID := s.getNullRoom()
+	if roomID == -1 {
+		s.Lock.Unlock()
 		// 负载以达上限
 		return -1
 	}
-	service := ":" + strconv.Itoa(s.Config.PortPoolBegin+s.CurrentLoad)
+	port = s.Config.PortPoolBegin + roomID
+	service := ":" + strconv.Itoa(port)
 	udpAddr, err := net.ResolveUDPAddr("udp4", service)
-	checkError(err)
-	conn, err := net.ListenUDP("udp", udpAddr)
-	checkError(err)
-	fmt.Println("GameServer is running in " + service)
-	s.Room = append(s.Room, RoomData{
-		Conn:         conn,
-		Players:      []Player{},
-		Frame:        []FrameState{},
-		CurrentFrame: 0,
-		People:       people,
-		Running:      false,
-		Lock:         new(sync.RWMutex),
-		CreateTime:   time.Now(),
-	})
-	fmt.Println(s.Room)
-	go s.handleClient(conn, s.CurrentLoad)
-	s.CurrentLoad++
-	return s.Config.PortPoolBegin + s.CurrentLoad - 1
-}
-
-func checkError(err error) {
 	if err != nil {
-		fmt.Println("Fatal error ", err.Error())
+		fmt.Println("ResolveUDPAddr Error: ", err.Error())
+		s.Lock.Unlock()
+		return -1
 	}
+	conn, err := net.ListenUDP("udp", udpAddr)
+	if err != nil {
+		fmt.Println("ListenUDP Error: ", err.Error())
+		s.Lock.Unlock()
+		return -1
+	}
+	fmt.Println("GameServer is running in " + service)
+	room := & s.Room[roomID]
+	room.Conn = conn
+	room.MaxPeople = maxPeople
+	room.Lock = new(sync.RWMutex)
+	room.CreateTime = time.Now()
+	room.Using = true
+	s.Lock.Unlock()
+	go s.handleClient(roomID)
+	return
 }

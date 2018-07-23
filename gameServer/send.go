@@ -30,62 +30,74 @@ type Command struct {
 func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 	var res ResData
 	// 检测是否掉线
-	if s.Room[rID].Players[pID].MissFrame > 200 {
+	room := &s.Room[rID]
+	player := &room.Players[pID]
+	if player.MissFrame > 200 {
 		// 判断为已经掉线
-		s.Room[rID].Players[pID].MissFrame = 999
+		player.MissFrame = 999
 		c <- 0
 		return
 	}
-
-	s.Room[rID].Players[pID].MissFrame++
-	if s.Room[rID].CurrentFrame-s.Room[rID].Players[pID].Frame > 10 {
+	player.MissFrame++
+	if room.CurrentFrame-player.Frame > 5 {
 		res = ResData{
-			Data: s.Room[rID].Frame[s.Room[rID].Players[pID].Frame : s.Room[rID].Players[pID].Frame+10],
+			Data: room.Frame[player.Frame : player.Frame+5],
 		}
 	} else {
 		res = ResData{
-			Data: s.Room[rID].Frame[s.Room[rID].Players[pID].Frame:],
+			Data: room.Frame[player.Frame:],
 		}
 	}
 	b, err := json.Marshal(res)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	s.Room[rID].Conn.WriteToUDP(b, s.Room[rID].Players[pID].IP)
+	room.Conn.WriteToUDP(b, player.Addr)
 	c <- 0
 }
 
 func (s *GameServer) sendAll(id int) {
 	for {
-		for i := range s.Room[id].Players {
-			if s.Room[id].Players[i].MissFrame == 999 {
-				s.goOutRoom(id, s.Room[id].Players[i].IP)
+		time.Sleep(time.Millisecond * 33)
+		s.Lock.Lock()
+		room := &s.Room[id]
+		if room.Using == false {
+			s.Lock.Unlock()
+			return
+		}
+		for i := range room.Players {
+			if room.Players[i].MissFrame == 999 {
+				// 清理掉线用户
+				s.goOutRoom(id, room.Players[i].Addr)
 				break
 			}
 		}
-		// 并发发送数据给用户
-		c := make(chan int)
-		playerCount := len(s.Room[id].Players)
+		if len(room.Frame) > 0 {
 
-		s.Room[id].Lock.RLock()
-		for i := 0; i < playerCount; i++ {
-			go s.sendToPlayer(id, i, c)
+			// 并发发送数据给用户
+			c := make(chan int)
+			playerCount := len(room.Players)
+
+			room.Lock.RLock()
+			for i := 0; i < playerCount; i++ {
+				go s.sendToPlayer(id, i, c)
+			}
+			for i := 0; i < playerCount; i++ {
+				<-c
+			}
+			room.Lock.RUnlock()
+			close(c)
 		}
-		for i := 0; i < playerCount; i++ {
-			<-c
-		}
-		s.Room[id].Lock.RUnlock()
-		close(c)
 		// 增加新的帧， 互斥锁
-		s.Room[id].Lock.Lock()
-		s.Room[id].Frame = append(s.Room[id].Frame, FrameState{
-			FrameID:  s.Room[id].CurrentFrame + 1,
+		room.Lock.Lock()
+		room.Frame = append(room.Frame, FrameState{
+			FrameID:  room.CurrentFrame + 1,
 			Commands: []Command{},
 		})
-		s.Room[id].CurrentFrame++
-		s.Room[id].Running = true
-		s.Room[id].Lock.Unlock()
+		room.CurrentFrame++
+		room.Running = true
+		room.Lock.Unlock()
+		s.Lock.Unlock()
 		// 解锁
-		time.Sleep(time.Millisecond * 33)
 	}
 }
