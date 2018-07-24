@@ -58,7 +58,7 @@ func (s *GameServer) sendToPlayer(rID, pID int, c chan int) {
 
 func (s *GameServer) sendAll(id int) {
 	for {
-		time.Sleep(time.Millisecond * 33)
+		time.Sleep(time.Millisecond * 67)
 		s.Lock.Lock()
 		room := &s.Room[id]
 		if room.Using == false {

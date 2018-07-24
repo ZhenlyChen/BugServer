@@ -20,7 +20,7 @@ type RoomsController struct {
 type RoomsRes struct {
 	Status string              `json:"status"`
 	Count  int                 `json:"count"`
-	Rooms  []services.GameRoom `json:"rooms"`
+	Rooms  []services.RoomInfo `json:"rooms"`
 }
 
 // GetHeart GET /room/heart 发送心跳包
@@ -62,14 +62,6 @@ func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 		res.Status = StatusBadReq
 		return
 	}
-	rooms := c.Service.GetRooms()
-	res.Count = len(rooms)
-	// 删除密码
-	for _, room := range rooms {
-		if room.Password != "" {
-			room.Password = "password"
-		}
-	}
 	endIndex := page * pageSize
 	if res.Count <= (page-1)*pageSize {
 		res.Status = StatusNull
@@ -77,17 +69,26 @@ func (c *RoomsController) GetListBy(pageStr string) (res RoomsRes) {
 	} else if res.Count < page*pageSize {
 		endIndex = res.Count
 	}
-
+	rooms := c.Service.GetRooms()
+	res.Count = len(rooms)
+	// 删除密码 处理用户
+	for i := (page - 1) * pageSize; i < endIndex; i++ {
+		room := &rooms[i]
+		if room.Info.Password != "" {
+			room.Info.Password = "password"
+		}
+		room.Info.PlayerCount = len(room.Info.Players)
+		room.Info.Players = []services.Player{}
+		res.Rooms = append(res.Rooms, room.Info)
+	}
 	res.Status = StatusSuccess
-	res.Rooms = rooms[(page-1)*pageSize : endIndex]
 	return
 }
 
 // RoomRes ...
 type RoomRes struct {
-	Status     string                `json:"status"`
-	Room       services.GameRoom     `json:"room"`
-	PlayerInfo []services.PlayerInfo `json:"players"`
+	Status   string            `json:"status"`
+	RoomInfo services.RoomInfo `json:"room"`
 }
 
 // GetDetail GET /room/detail/ 获取自己房间详情
@@ -109,29 +110,16 @@ func (c *RoomsController) GetDetail() (res RoomRes) {
 		return
 	}
 	// 是否已经被踢出房间
-	inRoom := false
 	userID := c.Session.GetString("id")
-	for _, player := range room.Players {
-		if player.UserID == userID {
-			inRoom = true
-		}
-	}
-	if !inRoom {
-		// 不再房间内
+	if !c.Service.IsInRoom(userID) {
 		res.Status = StatusNotFound
 		return
 	}
 	// 获取玩家详细信息
-	playInfo, err := c.Service.GetPlayers(roomID)
-	if err != nil {
-		res.Status = err.Error()
-		return
-	}
 	res.Status = StatusSuccess
-	res.Room = *room
-	res.PlayerInfo = playInfo
-	if res.Room.Password != "" {
-		res.Room.Password = "password"
+	res.RoomInfo = (*room).Info
+	if res.RoomInfo.Password != "" {
+		res.RoomInfo.Password = "password"
 	}
 	return
 }
@@ -230,7 +218,6 @@ func (c *RoomsController) PostReadyBy(isReady string) (res CommonRes) {
 	return
 }
 
-
 // PostReadyBy POST /room/play/{true/false} 设置开始状态
 func (c *RoomsController) PostPlayBy(isPlaying string) (res CommonRes) {
 	// 是否登陆
@@ -287,7 +274,7 @@ func (c *RoomsController) PostTeamBy(teamStr string) (res CommonRes) {
 }
 
 // PostRoleBy POST /room/role/{roleName} 设置角色
-func (c *RoomsController) PostRoleBy(role string) (res CommonRes) {
+func (c *RoomsController) PostRoleBy(roleStr string) (res CommonRes) {
 	// 是否登陆
 	if c.Session.Get("id") == nil {
 		res.Status = StatusNotLogin
@@ -299,11 +286,16 @@ func (c *RoomsController) PostRoleBy(role string) (res CommonRes) {
 		res.Status = StatusNotFound
 		return
 	}
-	if role == "" {
+	if roleStr == "" {
 		res.Status = StatusBadReq
 		return
 	}
-	if err := c.Service.SetRole(roomID, c.Session.GetString("id"), role); err != nil {
+	roleID, err := strconv.Atoi(roleStr)
+	if err != nil {
+		res.Status = StatusBadReq
+		return
+	}
+	if err := c.Service.SetRole(roomID, roleID, c.Session.GetString("id")); err != nil {
 		res.Status = err.Error()
 		return
 	}
@@ -324,7 +316,12 @@ func (c *RoomsController) PostQuit() (res CommonRes) {
 		res.Status = StatusNotFound
 		return
 	}
-	if err := c.Service.QuitRoom(roomID, c.Session.GetString("id")); err != nil {
+	room, err := c.Service.GetRoom(roomID)
+	if err != nil {
+		res.Status = StatusNotFound
+		return
+	}
+	if err := c.Service.QuitRoom(room, c.Session.GetString("id")); err != nil {
 		res.Status = err.Error()
 		return
 	}

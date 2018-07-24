@@ -23,7 +23,8 @@ type GameServer struct {
 
 // RoomData ...
 type RoomData struct {
-	Using        bool          // 是否使用中
+	Using        bool // 是否使用中
+	Port         int
 	Running      bool          // 是否已经开始
 	Conn         *net.UDPConn  // 连接会话
 	Players      []Player      // 房间玩家
@@ -60,6 +61,17 @@ func (s *GameServer) clearRoom() bool {
 		}
 	}
 	return true
+}
+
+func (s *GameServer) IsUsing(port int) bool {
+	s.Lock.Lock()
+	defer s.Lock.Unlock()
+	for _, room := range s.Room {
+		if room.Port == port {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *GameServer) closeRoom(id int) {
@@ -102,8 +114,9 @@ func (s *GameServer) NewRoom(maxPeople int) (port int) {
 		return -1
 	}
 	fmt.Println("GameServer is running in " + service)
-	room := & s.Room[roomID]
+	room := &s.Room[roomID]
 	room.Conn = conn
+	room.Port = port
 	room.MaxPeople = maxPeople
 	room.Lock = new(sync.RWMutex)
 	room.CreateTime = time.Now()

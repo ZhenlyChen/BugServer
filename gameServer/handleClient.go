@@ -24,7 +24,8 @@ type UserBack struct {
 
 // UserComeIn ...
 type UserComeIn struct {
-	ID int `json:"i"`
+	ID  int    `json:"i"`
+	Key string `json:"k"`
 }
 
 func (s *GameServer) handleClient(id int) {
@@ -61,7 +62,6 @@ func (s *GameServer) handleClient(id int) {
 func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 	data := UserComeIn{}
 	if err := json.Unmarshal(buf[1:bytes.IndexByte(buf[1:], 0)+1], &data); err == nil {
-		fmt.Println(s.Room[id])
 		s.Room[id].Lock.Lock()
 		room := &s.Room[id]
 		if room.Using == false {

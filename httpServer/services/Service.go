@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/ZhenlyChen/BugServer/httpServer/models"
-	"sync"
 )
 
 // Service ...
@@ -37,7 +36,6 @@ func NewService(m *models.Model) *Service {
 	}
 	service.Room = roomService{
 		Service: service,
-		roomLock: new(sync.RWMutex),
 	}
 	service.Game = gameService{
 		Service: service,

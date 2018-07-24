@@ -277,25 +277,27 @@ example： /room/list/{page}?size=n
 返回：
 
 ```go
+// RoomsRes 房间列表
 type RoomsRes struct {
 	Status string              `json:"status"`
-	Count  int                 `json:"count"` // 总数量
-	Rooms  []services.GameRoom `json:"rooms"`
+	Count  int                 `json:"count"`
+	Rooms  []services.RoomInfo `json:"rooms"`
 }
-// GameRoom 房间数据
-type GameRoom struct {
-	ID        int      `json:"id"`        // 房间 ID
-	OwnID     string   `json:"ownId"`     // 房主ID
-    OwnName   string   `json:"ownName"`   // 房主名字
-	Port      int      `json:"port"`      // 房间服务器端口
-	Title     string   `json:"title"`     // 标题
-	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
-	GameMap   string   `json:"gameMap"`   // 游戏地图
-	MaxPlayer int      `json:"maxPlayer"` // 最大人数
-	Mode      string   `json:"mode"`      // 游戏模式
-	Password  string   `json:"password"`  // 房间密码
-	Playing   bool     `json:"playing"`   // 是否正在玩
-	Players   []Player `json:"players"`   // 玩家数据
+// RoomInfo 房间数据
+type RoomInfo struct {
+	ID          int          `json:"id"`          // 房间ID
+	OwnID       string       `json:"ownId"`       // 房主ID
+	OwnInfo     UserBaseInfo `json:"ownInfo"`     // 房主信息
+	Port        int          `json:"port"`        // 房间服务器端口
+	Title       string       `json:"title"`       // 标题
+	IsRandom    bool         `json:"isRandom"`    // 是否随机角色
+	GameMap     string       `json:"gameMap"`     // 游戏地图
+	RandSeed    int          `json:"randSeed"`    // 随机种子
+	MaxPlayer   int          `json:"maxPlayer"`   // 最大人数
+	PlayerCount int          `json:"playerCount"` // 当前玩家数
+	Mode        string       `json:"mode"`        // 游戏模式
+	Password    string       `json:"password"`    // 房间密码
+	Playing     bool         `json:"playing"`     // 是否正在玩
 }
 // 成功
 status = "success"
@@ -317,33 +319,33 @@ type RoomRes struct {
 	Room       services.GameRoom     `json:"room"`
 	PlayerInfo []services.PlayerInfo `json:"players"`
 }
-// GameRoom 房间数据
-type GameRoom struct {
-	ID        int      `json:"id"`        // 房间 ID
-	OwnID     string   `json:"ownId"`     // 房主ID
-    OwnName   string   `json:"ownName"`   // 房主名字
-	Port      int      `json:"port"`      // 房间服务器端口
-	Title     string   `json:"title"`     // 标题
-	IsRandom  bool     `json:"isRandom"`  // 是否随机角色
-	GameMap   string   `json:"gameMap"`   // 游戏地图
-	MaxPlayer int      `json:"maxPlayer"` // 最大人数
-	Mode      string   `json:"mode"`      // 游戏模式
-	Password  string   `json:"password"`  // 房间密码
-	Playing   bool     `json:"playing"`   // 是否正在玩
-	Players   []Player `json:"players"`   // 玩家数据
+// RoomInfo 房间数据
+type RoomInfo struct {
+	ID          int          `json:"id"`          // 房间ID
+	OwnID       string       `json:"ownId"`       // 房主ID
+	OwnInfo     UserBaseInfo `json:"ownInfo"`     // 房主信息
+	Port        int          `json:"port"`        // 房间服务器端口
+	Title       string       `json:"title"`       // 标题
+	IsRandom    bool         `json:"isRandom"`    // 是否随机角色
+	GameMap     string       `json:"gameMap"`     // 游戏地图
+	RandSeed    int          `json:"randSeed"`    // 随机种子
+	MaxPlayer   int          `json:"maxPlayer"`   // 最大人数
+	PlayerCount int          `json:"playerCount"` // 当前玩家数(传输时设置)
+	Mode        string       `json:"mode"`        // 游戏模式
+	Password    string       `json:"password"`    // 房间密码
+	Playing     bool         `json:"playing"`     // 是否正在玩
+	Players     []Player     `json:"players"`     // 玩家数据
 }
-// PlayerInfo 玩家个性信息
-type PlayerInfo struct {
-	Player Player       `json:"player"`
-	Info   UserBaseInfo `json:"info"`
-}
+
 // Player 玩家信息
 type Player struct {
-	UserID  string `json:"userId"`  // 玩家ID
-	GameID  int    `json:"gameId"`  // 游戏内ID
-	RoleID  string `json:"roleId"`  // 角色ID
-	IsReady bool   `json:"isReady"` // 是否准备
-	Team    int    `json:"team"`    // "1-4" - 队伍一~四
+	UserID  string       `json:"userId"`  // 玩家ID
+	Info    UserBaseInfo `json:"info"`    // 玩家信息
+	GameID  int          `json:"gameId"`  // 游戏内ID
+	RoleID  int          `json:"roleId"`  // 角色ID
+	IsReady bool         `json:"isReady"` // 是否准备
+	Heart   int          `json:"heart"`   // 心跳💗
+	Team    int          `json:"team"`    // 玩家队伍
 }
 // UserBaseInfo 用户个性信息
 type UserBaseInfo struct {
