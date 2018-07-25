@@ -19,6 +19,7 @@ type RoomService interface {
 	SetReady(roomID int, userID string, isReady bool) error
 	SetRole(roomID, roleID int, userID string) error
 	SetTeam(roomID, teamID int, userID string) error
+	GetKey(userID string, roomID int) (int, error)
 	GetRooms() []Room
 	QuitRoom(room *Room, userID string) error
 	// 房主
@@ -46,7 +47,6 @@ const (
 
 	MaxRoom   = 100
 	MaxPlayer = 20
-	MaxRole   = 4
 )
 
 type Room struct {
@@ -127,6 +127,19 @@ func (s *roomService) Heart(userID string, roomID int) bool {
 		}
 	}
 	return false
+}
+
+func (s *roomService) GetKey(userID string, roomID int) (int, error) {
+	room, err := s.GetRoom(roomID)
+	if err != nil {
+		return 0, ErrNotFound
+	}
+	for i := range room.Info.Players {
+		if room.Info.Players[i].UserID == userID {
+			return s.Game.GetKey(room.Info.Players[i].GameID, room.Info.Port)
+		}
+	}
+	return 0, ErrNotFound
 }
 
 // GetRooms 获取房间列表

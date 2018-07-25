@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"errors"
+	"math/rand"
 )
 
 // ServerConfig ...
@@ -28,6 +30,7 @@ type RoomData struct {
 	Running      bool          // 是否已经开始
 	Conn         *net.UDPConn  // 连接会话
 	Players      []Player      // 房间玩家
+	Keys         []PlayerKey   // 玩家密钥
 	Frame        []FrameState  // 房间帧
 	CurrentFrame int           // 当前帧
 	MaxPeople    int           // 人数上限
@@ -35,10 +38,17 @@ type RoomData struct {
 	Lock         *sync.RWMutex // 读写锁
 }
 
+// PlayerKey ...
+type PlayerKey struct {
+	GameID int
+	Key    int
+}
+
 // Player ...
 type Player struct {
 	Addr      *net.UDPAddr // 玩家地址
 	ID        int          // 玩家ID
+	Key       int          // 玩家密钥
 	Frame     int          // 玩家当前帧
 	MissFrame int          // 玩家丢失帧
 }
@@ -61,6 +71,35 @@ func (s *GameServer) clearRoom() bool {
 		}
 	}
 	return true
+}
+
+var (
+	ErrNotFound = errors.New("not_found")
+)
+
+func (s *GameServer) GetKey(gameID, port int) (int, error) {
+	s.Lock.RLock()
+	defer s.Lock.RUnlock()
+	for i := range s.Room {
+		if s.Room[i].Port == port {
+			s.Room[i].Lock.Lock()
+			key := rand.Intn(167167167)
+			for i := range s.Room[i].Keys {
+				if s.Room[i].Keys[i].GameID == gameID {
+					key = s.Room[i].Keys[i].Key
+					s.Room[i].Lock.Unlock()
+					return key, nil
+				}
+			}
+			s.Room[i].Keys = append(s.Room[i].Keys, PlayerKey{
+				GameID: gameID,
+				Key: key,
+			})
+			s.Room[i].Lock.Unlock()
+			return key, nil
+		}
+	}
+	return 0, ErrNotFound
 }
 
 func (s *GameServer) IsUsing(port int) bool {

@@ -24,8 +24,8 @@ type UserBack struct {
 
 // UserComeIn ...
 type UserComeIn struct {
-	ID  int    `json:"i"`
-	Key string `json:"k"`
+	ID  int `json:"i"`
+	Key int `json:"k"`
 }
 
 func (s *GameServer) handleClient(id int) {
@@ -38,6 +38,24 @@ func (s *GameServer) handleClient(id int) {
 		}
 		if err != nil || s.Room[id].Using == false {
 			fmt.Println("Error data from room ", id)
+			return
+		}
+
+		// 检查合法性
+		legal := false
+		if buf[0] != '0' {
+			s.Room[id].Lock.RLock()
+			for _, player := range s.Room[id].Players {
+				if player.Addr.String() == addr.String() {
+					legal = true
+					break
+				}
+			}
+			s.Room[id].Lock.RUnlock()
+		}
+		if !legal {
+			// 非法请求
+			fmt.Println("illeage req from", addr.String())
 			return
 		}
 		if buf[0] == '0' { // 加入房间
@@ -81,6 +99,15 @@ func (s *GameServer) joinRoom(id int, buf *[1024]byte, addr *net.UDPAddr) {
 				room.Lock.Unlock()
 				return
 			}
+		}
+		key := false
+		for i := range room.Keys {
+			if room.Keys[i].GameID == data.ID && room.Keys[i].Key == data.Key {
+				key = true
+			}
+		}
+		if !key {
+			return
 		}
 		room.Players = append(room.Players, Player{
 			Addr:      addr,

@@ -428,3 +428,31 @@ func (c *RoomsController) PostStart() (res CommonRes) {
 	res.Status = StatusSuccess
 	return
 }
+
+type KeyRes struct {
+	Status string `json:"status"`
+	Key    int    `json:"key"`
+}
+
+// GetKey GET /room/key 获取进入对局的密钥
+func (c *RoomsController) GetKey() (res KeyRes) {
+	// 是否登陆
+	if c.Session.Get("id") == nil {
+		res.Status = StatusNotLogin
+		return
+	}
+	// 是否在房间里面
+	roomID, err := c.Session.GetInt("room")
+	if err != nil {
+		res.Status = StatusNotFound
+		return
+	}
+	key, err := c.Service.GetKey(c.Session.GetString("id"), roomID)
+	if err != nil {
+		res.Status = StatusNotAllow
+		return
+	}
+	res.Key = key
+	res.Status = StatusSuccess
+	return
+}

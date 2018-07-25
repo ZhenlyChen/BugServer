@@ -499,6 +499,25 @@ status = "not_found"
 
 
 
+### GET /room/key 获取密钥
+
+返回值：
+
+```go
+type KeyRes struct {
+	Status string `json:"status"`
+	Key    int    `json:"key"`
+}
+// 成功
+status = "success"
+// 没有登陆
+status = "not_login"
+// 用户不在游戏已开始的房间里面
+status = "not_found"
+```
+
+
+
 ### POST /room/quit 退出房间
 
 返回值：
@@ -691,7 +710,8 @@ type Game struct {
 0
 // UserComeIn ...
 type UserComeIn struct {
-	ID int `json:"id"`
+	ID  int    `json:"i"`
+	Key string `json:"k"`
 }
 ```
 
@@ -705,11 +725,13 @@ type UserComeIn struct {
 
 ```go
 1
+// UserData ...
 type UserData struct {
-	ID    int `json:"id"`
-	Input int `json:"input"`
-    LocX float32 `json:"x"`
-    LocY float32 `json:"y"`
+	ID    int     `json:"i"`
+	Input int     `json:"c"`
+	LocX  float32 `json:"x"`
+	LocY  float32 `json:"y"`
+	Dir   int     `json:"d"`
 }
 ```
 
@@ -717,9 +739,10 @@ type UserData struct {
 
 ```go
 2
+// UserBack ...
 type UserBack struct {
-	ID    int `json:"id"`
-	Frame int `json:"frame"`
+	ID    int `json:"i"`
+	Frame int `json:"f"`
 }
 ```
 
@@ -734,19 +757,22 @@ type UserBack struct {
 ```go
 // ResData ...
 type ResData struct {
-	Data []FrameState `json:"data"`
+	Data []FrameState `json:"d"`
 }
 
 // FrameState ...
 type FrameState struct {
-	FrameID  int       `json:"frameID"`
-	Commends []Commend `json:"commends"`
+	FrameID  int       `json:"f"`
+	Commands []Command `json:"c"`
 }
 
 // Commend ...
-type Commend struct {
-	UserID int `json:"id"`
-	Input  int `json:"input"`
+type Command struct {
+	UserID int     `json:"i"`
+	Input  int     `json:"c"`
+	LocX   float32 `json:"x"`
+	LocY   float32 `json:"y"`
+	Dir    int     `json:"d"`
 }
 ```
 
