@@ -2,11 +2,9 @@
 
 ## 目录
 
-Table of Contents
-=================
-
 * [API](#api)
   * [目录](#%E7%9B%AE%E5%BD%95)
+* [Table of Contents](#table-of-contents)
   * [User](#user)
     * [POST /user/login 登陆](#post-userlogin-%E7%99%BB%E9%99%86)
     * [POST /user/register 注册](#post-userregister-%E6%B3%A8%E5%86%8C)
@@ -24,6 +22,7 @@ Table of Contents
     * [POST /room/ready/\{true/false\} 设置准备状态](#post-roomreadytruefalse-%E8%AE%BE%E7%BD%AE%E5%87%86%E5%A4%87%E7%8A%B6%E6%80%81)
     * [POST /room/team/\{teamID\} 设置队伍](#post-roomteamteamid-%E8%AE%BE%E7%BD%AE%E9%98%9F%E4%BC%8D)
     * [POST /room/role/\{roleName\} 设置角色](#post-roomrolerolename-%E8%AE%BE%E7%BD%AE%E8%A7%92%E8%89%B2)
+    * [GET /room/key 获取密钥](#get-roomkey-%E8%8E%B7%E5%8F%96%E5%AF%86%E9%92%A5)
     * [POST /room/quit 退出房间](#post-roomquit-%E9%80%80%E5%87%BA%E6%88%BF%E9%97%B4)
     * [POST /room/info 设置房间信息](#post-roominfo-%E8%AE%BE%E7%BD%AE%E6%88%BF%E9%97%B4%E4%BF%A1%E6%81%AF)
     * [POST /room/own/\{userId\} 设置房主](#post-roomownuserid-%E8%AE%BE%E7%BD%AE%E6%88%BF%E4%B8%BB)
