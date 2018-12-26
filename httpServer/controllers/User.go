@@ -18,7 +18,7 @@ type UsersController struct {
 	Session *sessions.Session
 }
 
-// LoginReq OST /user/login 登陆请求
+// LoginReq POST /user/login 登陆请求
 type LoginReq struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
